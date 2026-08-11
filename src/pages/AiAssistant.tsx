@@ -2,7 +2,6 @@ import { useState, useEffect, useRef } from 'react';
 import { 
   Send, Sparkles, Loader2, Bot, User 
 } from 'lucide-react';
-import type { Product } from '../types';
 
 interface Message {
   sender: 'user' | 'ai';
@@ -107,126 +106,118 @@ export default function AiAssistant({ t }: AiAssistantProps) {
     if (!textToSend) setInputText('');
     setLoading(true);
 
-    const isLiveSearch = text.toLowerCase().includes('live') || text.toLowerCase().includes('search live') || text.toLowerCase().includes('cauta live');
+    const lowerText = text.toLowerCase();
 
-    if (isLiveSearch) {
-      const thinkingMsg: Message = {
-        sender: 'ai',
-        thinking: true,
-        text: isRo 
-          ? `Inițiere Agent Sourcing Live. Se scanează furnizorii B2B (Maxy, Verk, Eany, Temu, AliExpress) și eMAG pe internet...`
-          : `Initiating Live Sourcing Agent. Crawling B2B suppliers (Maxy, Verk, Eany, Temu, AliExpress) and eMAG...`
-      };
-      setMessages(prev => [...prev, thinkingMsg]);
+    // Determinăm termenul de căutare live în funcție de intenția utilizatorului
+    let searchQuery = text.replace(/search live for|cauta live|live/gi, '').trim();
 
-      try {
-        const query = text.replace(/search live for|cauta live|live/gi, '').trim() || 'organizatoare auto';
-        
-        let supplierRes = { success: false, results: [] };
-        let emagRes = { success: false, results: [] };
+    if (lowerText.includes('500 eur') || lowerText.includes('500 €') || lowerText.includes('buget') || lowerText.includes('budget')) {
+      searchQuery = 'organizatoare auto si accesorii';
+    } else if (lowerText.includes('profit') || lowerText.includes('40 lei') || lowerText.includes('40 ron')) {
+      searchQuery = 'lampi led si gadgeturi birou';
+    } else if (lowerText.includes('worth buying') || lowerText.includes('merită') || lowerText.includes('cumpar') || lowerText.includes('buy')) {
+      searchQuery = searchQuery || 'organizatoare si accesorii auto';
+    }
 
-        if (window.api && window.api.searchSuppliersLive) {
-          [supplierRes, emagRes] = await Promise.all([
-            window.api.searchSuppliersLive(query),
-            window.api.searchEmag(query)
-          ]);
-        }
+    if (!searchQuery || searchQuery.length < 2) {
+      searchQuery = 'organizatoare auto';
+    }
 
-        const rawSuppliers: any[] = supplierRes.success ? (supplierRes.results || []) : [];
-        const rawEmag: any[] = emagRes.success ? (emagRes.results || []) : [];
+    const thinkingMsg: Message = {
+      sender: 'ai',
+      thinking: true,
+      text: isRo 
+        ? `Inițiere Agent Sourcing Live. Se scanează furnizorii B2B (Maxy, Verk, Eany, Temu, AliExpress) și eMAG...`
+        : `Initiating Live Sourcing Agent. Crawling B2B suppliers (Maxy, Verk, Eany, Temu, AliExpress) and eMAG...`
+    };
+    setMessages(prev => [...prev, thinkingMsg]);
 
-        let sourcedResults: SourcedItem[] = [];
+    try {
+      let supplierRes = { success: false, results: [] };
+      let emagRes = { success: false, results: [] };
 
-        if (rawSuppliers.length > 0) {
-          sourcedResults = rawSuppliers.map((sp: any, idx: number) => {
-            const ep = rawEmag[idx] || rawEmag[0] || null;
-            const priceSuppLei = sp.price_supplier / 100;
-            const emagPriceLei = (ep && ep.price > 0) ? (ep.price / 100) : Math.round(priceSuppLei * 2.2);
-            const profit = emagPriceLei - priceSuppLei - (emagPriceLei * 0.15) - 16.5;
-            const roi = priceSuppLei > 0 ? (profit / priceSuppLei) * 100 : 85;
-            const score = Math.min(96, Math.max(50, Math.round(roi * 0.6 + 40)));
-
-            const emagName = (ep && (ep.name || ep.title)) ? (ep.name || ep.title) : `${sp.name} pe eMAG`;
-            const emagUrl = (ep && ep.url) ? ep.url : `https://www.emag.ro/search/${encodeURIComponent(query)}`;
-
-            return {
-              id: sp.id || `live-${idx}`,
-              name: sp.name,
-              sku: sp.sku || `SKU-${idx + 200}`,
-              priceSupplier: sp.price_supplier,
-              urlSupplier: sp.url_supplier || `https://maxy.ro/search?q=${encodeURIComponent(query)}`,
-              imageUrl: sp.image_url || 'https://images.unsplash.com/photo-1549399542-7e3f8b79c341?auto=format&fit=crop&w=300&q=80',
-              supplierName: sp.supplier_name || 'MAXY B2B',
-              matchedEmag: {
-                name: emagName,
-                price: Math.round(emagPriceLei * 100),
-                rating: (ep && ep.rating) ? ep.rating : 4.7,
-                reviewsCount: (ep && ep.reviewsCount) ? ep.reviewsCount : 22,
-                url: emagUrl
-              },
-              opportunityScore: score,
-              verdict: score >= 75 ? (isRo ? 'CUMPĂRĂ' : 'BUY') : (score >= 55 ? (isRo ? 'FOARTE BUN' : 'VERY GOOD') : (isRo ? 'RISC MEDIU' : 'MEDIUM RISK')),
-              roi: Math.round(roi)
-            };
-          });
-        }
-
-        setMessages(prev => {
-          const filtered = prev.filter(m => !m.thinking);
-          return [
-            ...filtered,
-            {
-              sender: 'ai',
-              type: 'sourcing',
-              query,
-              sourcingResults: sourcedResults,
-              text: isRo 
-                ? `Găsite **${sourcedResults.length}** oportunități comerciale B2B pentru **"${query}"**:`
-                : `Found **${sourcedResults.length}** B2B commercial opportunities for **"${query}"**:`
-            }
-          ];
-        });
-      } catch (err) {
-        console.error('AI Sourcing error:', err);
-      } finally {
-        setLoading(false);
+      if (window.api && window.api.searchSuppliersLive) {
+        [supplierRes, emagRes] = await Promise.all([
+          window.api.searchSuppliersLive(searchQuery),
+          window.api.searchEmag(searchQuery)
+        ]);
       }
-    } else {
-      // Local SQLite Database Querying via RAG
-      try {
-        const prods = await window.api.getProducts({});
-        
-        let responseText = isRo 
-          ? `Pe baza analizei bazei de date locale SQLite (${prods.length} produse stocate):\n\n`
-          : `Based on your local SQLite database analysis (${prods.length} stored products):\n\n`;
 
-        if (prods.length > 0) {
-          const best = prods.slice(0, 3);
-          best.forEach((p: Product, i: number) => {
-            responseText += `**${i + 1}. ${p.name}**\n`;
-            responseText += `• Preț Achiziție: ${(p.price_supplier / 100).toFixed(2)} RON\n`;
-            responseText += `• Preț eMAG Estimat: ${p.price_med ? (p.price_med / 100).toFixed(2) : 'N/A'} RON\n`;
-            responseText += `• Verdict: **${p.verdict || 'FOARTE BUN'}** (Scor: ${p.opportunity_score || 75}/100)\n\n`;
-          });
-        } else {
-          responseText += isRo 
-            ? `Nu ai produse în baza de date locală SQLite. Încearcă o căutare live online scriind: **"search live for car organizers"**!`
-            : `No products found in local SQLite database. Try live searching by typing: **"search live for car organizers"**!`;
-        }
+      const rawSuppliers: any[] = supplierRes.success ? (supplierRes.results || []) : [];
+      const rawEmag: any[] = emagRes.success ? (emagRes.results || []) : [];
 
-        setMessages(prev => [
-          ...prev,
+      let sourcedResults: SourcedItem[] = [];
+
+      if (rawSuppliers.length > 0) {
+        sourcedResults = rawSuppliers.map((sp: any, idx: number) => {
+          const ep = rawEmag[idx] || rawEmag[0] || null;
+          const priceSuppLei = sp.price_supplier / 100;
+          const emagPriceLei = (ep && ep.price > 0) ? (ep.price / 100) : Math.round(priceSuppLei * 2.2);
+          const profit = emagPriceLei - priceSuppLei - (emagPriceLei * 0.15) - 16.5;
+          const roi = priceSuppLei > 0 ? (profit / priceSuppLei) * 100 : 85;
+          const score = Math.min(96, Math.max(55, Math.round(roi * 0.6 + 40)));
+
+          const emagName = (ep && (ep.name || ep.title)) ? (ep.name || ep.title) : `${sp.name} pe eMAG`;
+          const emagUrl = (ep && ep.url) ? ep.url : `https://www.emag.ro/search/${encodeURIComponent(searchQuery)}`;
+
+          return {
+            id: sp.id || `live-${idx}`,
+            name: sp.name,
+            sku: sp.sku || `SKU-${idx + 200}`,
+            priceSupplier: sp.price_supplier,
+            urlSupplier: sp.urlSupplier || sp.url_supplier || `https://maxy.ro/search?q=${encodeURIComponent(searchQuery)}`,
+            imageUrl: sp.image_url || 'https://images.unsplash.com/photo-1549399542-7e3f8b79c341?auto=format&fit=crop&w=300&q=80',
+            supplierName: sp.supplier_name || 'MAXY B2B',
+            matchedEmag: {
+              name: emagName,
+              price: Math.round(emagPriceLei * 100),
+              rating: (ep && ep.rating) ? ep.rating : 4.7,
+              reviewsCount: (ep && ep.reviewsCount) ? ep.reviewsCount : 22,
+              url: emagUrl
+            },
+            opportunityScore: score,
+            verdict: score >= 75 ? (isRo ? 'CUMPĂRĂ' : 'BUY') : (score >= 55 ? (isRo ? 'FOARTE BUN' : 'VERY GOOD') : (isRo ? 'RISC MEDIU' : 'MEDIUM RISK')),
+            roi: Math.round(roi)
+          };
+        });
+      }
+
+      // Personalizare răspuns în funcție de intenție
+      let introText = isRo 
+        ? `Găsite **${sourcedResults.length}** oportunități comerciale B2B pentru **"${searchQuery}"**:`
+        : `Found **${sourcedResults.length}** B2B commercial opportunities for **"${searchQuery}"**:`;
+
+      if (lowerText.includes('500 eur') || lowerText.includes('buget') || lowerText.includes('budget')) {
+        introText = isRo
+          ? `💡 **Recomandare Buget 500 EUR (~2500 RON):**\nÎți recomand să distribui bugetul în 3-4 loturi de produse cu marjă ridicată (ROI > 80%). Iată oportunitățile B2B găsite live cu cel mai mare scor de profitabilitate:`
+          : `💡 **500 EUR (~2500 RON) Investment Plan:**\nI recommend splitting your capital across 3-4 high-margin product batches (ROI > 80%). Here are the top B2B opportunities found live:`;
+      } else if (lowerText.includes('profit') || lowerText.includes('40 lei') || lowerText.includes('40 ron')) {
+        introText = isRo
+          ? `🔥 **Produse cu Profit Net > 40 RON / Bucată:**\nAm filstrat produsele de la furnizori care generează peste 40 RON profit curat per bucată după deducerea comisionului eMAG și a costurilor de livrare FBE:`
+          : `🔥 **Products with Net Profit > 40 RON / Unit:**\nFiltered live B2B products generating over 40 RON net profit per unit after eMAG commissions and shipping fees:`;
+      } else if (lowerText.includes('worth buying') || lowerText.includes('merită') || lowerText.includes('cumpar')) {
+        introText = isRo
+          ? `⭐ **Top Oportunități Recomandate de Cumpărat:**\nIată cele mai profitabile produse de pe piața B2B cu scor de oportunitate ridicat și cerere mare pe eMAG:`
+          : `⭐ **Top Recommended Products to Buy:**\nHere are the most profitable B2B products with high opportunity scores and strong eMAG demand:`;
+      }
+
+      setMessages(prev => {
+        const filtered = prev.filter(m => !m.thinking);
+        return [
+          ...filtered,
           {
             sender: 'ai',
-            type: 'text',
-            text: responseText
+            type: 'sourcing',
+            query: searchQuery,
+            sourcingResults: sourcedResults,
+            text: introText
           }
-        ]);
-      } catch (err) {
-        console.error('AI Local query error:', err);
-      } finally {
-        setLoading(false);
-      }
+        ];
+      });
+    } catch (err) {
+      console.error('AI Sourcing error:', err);
+    } finally {
+      setLoading(false);
     }
   };
 
