@@ -130,10 +130,12 @@ async function main() {
       method: 'POST'
     }, {
       tag_name: versionTag,
-      name: `Release ${versionTag}`,
-      body: (versionData.releaseNotes || []).join('\n• '),
+      target_commitish: 'main',
+      name: `AI eMAG Assistant ${versionTag}`,
+      body: `## What's Changed in ${versionTag}\n\n• ` + (versionData.releaseNotes || []).join('\n• '),
       draft: false,
-      prerelease: false
+      prerelease: false,
+      make_latest: "true"
     });
 
     let uploadUrl = null;
