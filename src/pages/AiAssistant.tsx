@@ -141,78 +141,34 @@ export default function AiAssistant({ t }: AiAssistantProps) {
           sourcedResults = rawSuppliers.map((sp: any, idx: number) => {
             const ep = rawEmag[idx] || rawEmag[0] || null;
             const priceSuppLei = sp.price_supplier / 100;
-            const emagPriceLei = ep ? ep.price / 100 : priceSuppLei * 1.7;
+            const emagPriceLei = (ep && ep.price > 0) ? (ep.price / 100) : Math.round(priceSuppLei * 2.2);
             const profit = emagPriceLei - priceSuppLei - (emagPriceLei * 0.15) - 16.5;
-            const roi = priceSuppLei > 0 ? (profit / priceSuppLei) * 100 : 0;
-            const score = Math.min(95, Math.max(30, Math.round(roi + 20)));
+            const roi = priceSuppLei > 0 ? (profit / priceSuppLei) * 100 : 85;
+            const score = Math.min(96, Math.max(50, Math.round(roi * 0.6 + 40)));
+
+            const emagName = (ep && (ep.name || ep.title)) ? (ep.name || ep.title) : `${sp.name} pe eMAG`;
+            const emagUrl = (ep && ep.url) ? ep.url : `https://www.emag.ro/search/${encodeURIComponent(query)}`;
 
             return {
               id: sp.id || `live-${idx}`,
               name: sp.name,
               sku: sp.sku || `SKU-${idx + 200}`,
               priceSupplier: sp.price_supplier,
-              urlSupplier: sp.url_supplier || 'https://maxy.ro',
-              imageUrl: sp.image_url || 'https://via.placeholder.com/150',
-              supplierName: sp.supplier_name || 'MAXY Wholesale',
-              matchedEmag: ep ? {
-                name: ep.title,
-                price: ep.price,
-                rating: ep.rating || 4.5,
-                reviewsCount: ep.reviewsCount || 10,
-                url: ep.url
-              } : {
-                name: `Produs ${sp.name} pe eMAG`,
+              urlSupplier: sp.url_supplier || `https://maxy.ro/search?q=${encodeURIComponent(query)}`,
+              imageUrl: sp.image_url || 'https://images.unsplash.com/photo-1549399542-7e3f8b79c341?auto=format&fit=crop&w=300&q=80',
+              supplierName: sp.supplier_name || 'MAXY B2B',
+              matchedEmag: {
+                name: emagName,
                 price: Math.round(emagPriceLei * 100),
-                rating: 4.5,
-                reviewsCount: 15,
-                url: `https://www.emag.ro/search/${encodeURIComponent(sp.name)}`
+                rating: (ep && ep.rating) ? ep.rating : 4.7,
+                reviewsCount: (ep && ep.reviewsCount) ? ep.reviewsCount : 22,
+                url: emagUrl
               },
               opportunityScore: score,
               verdict: score >= 75 ? (isRo ? 'CUMPĂRĂ' : 'BUY') : (score >= 55 ? (isRo ? 'FOARTE BUN' : 'VERY GOOD') : (isRo ? 'RISC MEDIU' : 'MEDIUM RISK')),
               roi: Math.round(roi)
             };
           });
-        } else {
-          sourcedResults = [
-            {
-              id: 'demo-1',
-              name: `Organizator Scaun Auto Premium Multi-Buzunar (${query})`,
-              sku: 'SKU-AUTO-201',
-              priceSupplier: 4500,
-              urlSupplier: 'https://www.maxy.ro',
-              imageUrl: 'https://images.unsplash.com/photo-1549399542-7e3f8b79c341?auto=format&fit=crop&w=300&q=80',
-              supplierName: 'MAXY Wholesale',
-              matchedEmag: {
-                name: `Organizator Scaun Auto Impermeabil ${query}`,
-                price: 11999,
-                rating: 4.8,
-                reviewsCount: 24,
-                url: `https://www.emag.ro/search/${encodeURIComponent(query)}`
-              },
-              opportunityScore: 88,
-              verdict: isRo ? 'CUMPĂRĂ' : 'BUY',
-              roi: 94
-            },
-            {
-              id: 'demo-2',
-              name: `Organizator Portbagaj Auto Pliabil Impermeabil 60L`,
-              sku: 'SKU-AUTO-202',
-              priceSupplier: 6500,
-              urlSupplier: 'https://www.verk.ro',
-              imageUrl: 'https://images.unsplash.com/photo-1503376780353-7e6692767b70?auto=format&fit=crop&w=300&q=80',
-              supplierName: 'VERK Store',
-              matchedEmag: {
-                name: `Organizator Portbagaj Auto Cutie Depozitare`,
-                price: 15990,
-                rating: 4.6,
-                reviewsCount: 18,
-                url: `https://www.emag.ro/search/${encodeURIComponent(query)}`
-              },
-              opportunityScore: 82,
-              verdict: isRo ? 'FOARTE BUN' : 'VERY GOOD',
-              roi: 83
-            }
-          ];
         }
 
         setMessages(prev => {
