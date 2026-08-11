@@ -176,7 +176,7 @@ function seedInitialData() {
       log('Seeded default eMAG commissions.');
     }
     
-    // Seed 55 Verified Wholesale & B2B Suppliers
+    // Seed 50+ Verified Wholesale & B2B Suppliers
     const suppliersCount = db.prepare('SELECT COUNT(*) as count FROM suppliers').get().count;
     if (suppliersCount < 20) {
       const defaultSuppliers = [
@@ -316,6 +316,8 @@ export function getDbStats() {
   };
 }
 
+export const getDashboardStats = getDbStats;
+
 export function getSuppliers() {
   return db.prepare('SELECT * FROM suppliers ORDER BY name ASC').all();
 }
@@ -392,7 +394,7 @@ export function getProducts(filters = {}) {
   return db.prepare(query).all(...params);
 }
 
-export function getProductById(id) {
+export function getProductDetails(id) {
   const query = `
     SELECT p.*, s.name as supplier_name,
            r.price_min, r.price_med, r.price_max, r.sellers_count, r.rating, r.reviews_count,
@@ -442,7 +444,7 @@ export function addOrUpdateProduct(product) {
       );
       
       if (product.price_med || product.opportunity_score) {
-        saveResearchData(existing.id, product);
+        saveResearch(existing.id, product);
       }
       
       return { success: true, id: existing.id, updated: true };
@@ -458,7 +460,7 @@ export function addOrUpdateProduct(product) {
       );
       
       if (product.price_med || product.opportunity_score) {
-        saveResearchData(id, product);
+        saveResearch(id, product);
       }
       
       return { success: true, id, created: true };
@@ -469,7 +471,7 @@ export function addOrUpdateProduct(product) {
   }
 }
 
-function saveResearchData(productId, data) {
+export function saveResearch(productId, data) {
   const priceMin = data.price_min || data.price_supplier;
   const priceMed = data.price_med || Math.round(data.price_supplier * 1.5);
   const priceMax = data.price_max || Math.round(data.price_supplier * 2.0);
@@ -501,6 +503,8 @@ function saveResearchData(productId, data) {
     .run(productId, 'emag', priceMed);
 }
 
+export const saveRealtimeResearch = saveResearch;
+
 export function deleteProduct(id) {
   try {
     db.prepare('DELETE FROM products WHERE id = ?').run(id);
@@ -509,6 +513,19 @@ export function deleteProduct(id) {
   } catch (err) {
     return { success: false, error: err.message };
   }
+}
+
+export function getWatchlist() {
+  const query = `
+    SELECT p.*, s.name as supplier_name,
+           r.price_min, r.price_med, r.price_max, r.opportunity_score, r.verdict
+    FROM watchlist w
+    JOIN products p ON w.product_id = p.id
+    LEFT JOIN suppliers s ON p.supplier_id = s.id
+    LEFT JOIN research r ON p.id = r.product_id
+    ORDER BY w.added_at DESC
+  `;
+  return db.prepare(query).all();
 }
 
 export function toggleWatchlist(productId) {
@@ -551,6 +568,68 @@ export function addPortfolioItem(item) {
     );
     log(`Added portfolio item: ${item.sku}`);
     return { success: true, id };
+  } catch (err) {
+    return { success: false, error: err.message };
+  }
+}
+
+export const addOrUpdatePortfolioItem = addPortfolioItem;
+
+export function deletePortfolioItem(id) {
+  try {
+    db.prepare('DELETE FROM portfolio WHERE id = ?').run(id);
+    log(`Deleted portfolio item: ${id}`);
+    return { success: true };
+  } catch (err) {
+    return { success: false, error: err.message };
+  }
+}
+
+export function getAlerts() {
+  return db.prepare('SELECT * FROM alerts ORDER BY created_at DESC').all();
+}
+
+export function markAlertAsRead(id) {
+  try {
+    db.prepare('UPDATE alerts SET is_read = 1 WHERE id = ?').run(id);
+    return { success: true };
+  } catch (err) {
+    return { success: false, error: err.message };
+  }
+}
+
+export const markAlertRead = markAlertAsRead;
+
+export function addAlert(alert) {
+  try {
+    const id = alert.id || `alt_${Date.now()}`;
+    db.prepare('INSERT INTO alerts (id, product_id, type, message) VALUES (?, ?, ?, ?)')
+      .run(id, alert.product_id || null, alert.type, alert.message);
+    return { success: true, id };
+  } catch (err) {
+    return { success: false, error: err.message };
+  }
+}
+
+export function backupDatabase(destPath) {
+  try {
+    fs.copyFileSync(dbPath, destPath);
+    log(`Database backed up to: ${destPath}`);
+    return { success: true };
+  } catch (err) {
+    return { success: false, error: err.message };
+  }
+}
+
+export function restoreDatabase(srcPath) {
+  try {
+    if (db) {
+      db.close();
+    }
+    fs.copyFileSync(srcPath, dbPath);
+    db = new DatabaseSync(dbPath);
+    log(`Database restored from: ${srcPath}`);
+    return { success: true };
   } catch (err) {
     return { success: false, error: err.message };
   }
