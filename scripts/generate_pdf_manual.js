@@ -11,7 +11,7 @@ const htmlContent = `<!DOCTYPE html>
 <html lang="ro">
 <head>
   <meta charset="UTF-8">
-  <title>Manual Oficial de Utilizare - AI eMAG Assistant v1.7.4</title>
+  <title>Manual Oficial de Utilizare - AI eMAG Assistant v1.7.5</title>
   <style>
     @page {
       size: A4;
@@ -234,7 +234,7 @@ const htmlContent = `<!DOCTYPE html>
     <div style="font-size: 48pt; margin-bottom: 15px;">🚀</div>
     <div class="cover-title">AI eMAG Assistant</div>
     <div class="cover-subtitle">Manual Oficial de Utilizare Pas cu Pas</div>
-    <div class="cover-badge">VERSIUNEA v1.7.4 • ENTERPRISE EDITION</div>
+    <div class="cover-badge">VERSIUNEA v1.7.5 • ENTERPRISE EDITION v2.0</div>
     
     <div style="max-width: 500px; text-align: center; color: #cbd5e1; font-size: 11pt; line-height: 1.6; margin-bottom: 50px;">
       Ghidul complet și detaliat pentru configurarea sistemului de Inteligență Artificială, conectarea la eMAG Marketplace, vânătoarea de produse B2B și simularea marjelor de profit.

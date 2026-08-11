@@ -10,7 +10,7 @@ const UPDATE_MANIFEST_URL = 'https://raw.githubusercontent.com/nosenseofficial7-
  * Verifică disponibilitatea unei versiuni noi a aplicației
  */
 export async function checkForUpdates() {
-  const currentVersion = app.getVersion() || '1.7.4';
+  const currentVersion = app.getVersion() || '1.7.5';
   const cacheBustedUrl = `${UPDATE_MANIFEST_URL}?t=${Date.now()}`;
   
   const info = {
@@ -20,9 +20,9 @@ export async function checkForUpdates() {
     releaseDate: new Date().toISOString().split('T')[0],
     releaseNotes: [
       `Versiunea curentă v${currentVersion} este complet la zi.`,
-      "Suport bilingv complet (Română / Engleză) pe toate paginile.",
-      "Minor bug-fix: corecție verificare logică limbă activă (isRo).",
-      "Remediere vizuală Dark Mode pentru opțiunile din meniurile dropdown.",
+      "Refacere completă UI v2.0: Design Glassmorphic ultra-premium, degradeuri neon și micro-animații fluide.",
+      "Suport bilingv complet (Română / Engleză) pe toate paginile și modulele.",
+      "Sistem de actualizare rapidă fără pierderi de date (Baza de date SQLite & Licență).",
       "Optimizare sistem auto-update și sincronizare versională dinamică."
     ],
     downloadUrl: "https://github.com/nosenseofficial7-del/ai-emag-assistant/releases/latest/download/AI-eMAG-Assistant-Setup.exe"

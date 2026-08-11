@@ -17,7 +17,7 @@ export default function Header({
 }: HeaderProps) {
   const [searchInput, setSearchInput] = useState('');
   const [isUpdateModalOpen, setIsUpdateModalOpen] = useState(false);
-  const [versionBadge, setVersionBadge] = useState('v1.7.4');
+  const [versionBadge, setVersionBadge] = useState('v1.7.5');
   const [hasNewUpdate, setHasNewUpdate] = useState(false);
 
   useEffect(() => {
@@ -81,11 +81,10 @@ export default function Header({
       </div>
 
       <div className="header-actions">
-        {/* Check Updates Button */}
         <button 
           className="theme-toggle-header-btn" 
           onClick={() => setIsUpdateModalOpen(true)} 
-          title={lang === 'ro' ? "Verifică actualizări aplicație" : "Check for application updates"}
+          title={lang === 'ro' ? "Centru Actualizări Sistem" : "System Update Center"}
           style={{ 
             marginRight: '8px', 
             background: hasNewUpdate ? 'rgba(16, 185, 129, 0.2)' : 'rgba(59, 130, 246, 0.12)', 
@@ -93,8 +92,8 @@ export default function Header({
             color: hasNewUpdate ? '#34d399' : '#60a5fa' 
           }}
         >
-          <RefreshCw size={16} className={`text-blue ${hasNewUpdate ? 'animate-spin' : 'animate-spin-hover'}`} />
-          <span style={{ fontWeight: '700', fontSize: '12px' }}>{versionBadge}</span>
+          <RefreshCw size={15} className={`text-blue ${hasNewUpdate ? 'animate-spin' : ''}`} style={{ animation: 'pulse 2s infinite' }} />
+          <span style={{ fontWeight: 'bold', fontSize: '12px' }}>{versionBadge}</span>
         </button>
 
         {/* Language Toggle */}

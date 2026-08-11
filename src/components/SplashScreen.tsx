@@ -20,7 +20,7 @@ export default function SplashScreen({ onFinish, lang = 'ro' }: SplashScreenProp
       (window as any).api.checkForUpdates()
         .then((res: any) => {
           if (res) {
-            const v = res.latestVersion || res.currentVersion || '1.7.4';
+            const v = res.latestVersion || res.currentVersion || '1.7.5';
             setVersionText(`v${v} • Enterprise Edition`);
           }
         })

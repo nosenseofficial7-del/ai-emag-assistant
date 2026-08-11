@@ -1040,7 +1040,7 @@ export default function Settings({ t, lang }: SettingsProps) {
                   <h4 style={{ margin: 0, fontSize: '16px', fontWeight: '800', color: '#ffffff', display: 'flex', alignItems: 'center', gap: '8px' }}>
                     {lang === 'ro' ? 'Centrul de Actualizări Sistem' : 'System Update Center'}
                     <span style={{ fontSize: '10px', background: 'rgba(16, 185, 129, 0.2)', color: '#34d399', border: '1px solid rgba(16, 185, 129, 0.3)', padding: '2px 8px', borderRadius: '12px', fontWeight: '700' }}>
-                      v1.7.4
+                      v1.7.5
                     </span>
                   </h4>
                   <p style={{ margin: '4px 0 0 0', fontSize: '12px', color: '#94a3b8' }}>

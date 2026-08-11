@@ -1,12 +1,12 @@
 {
-  "latestVersion": "1.7.4",
+  "latestVersion": "1.7.5",
   "releaseDate": "2026-08-11",
   "releaseNotes": [
-    "Lansare versiunea v1.7.4!",
-    "Suport bilingv complet (Română / Engleză) pe toate paginile și taburile.",
-    "Minor bug-fix: corecție verificare logică limbă activă (isRo).",
-    "Remediere vizuală Dark Mode pentru opțiunile din meniurile dropdown (select).",
-    "Optimizare sistem auto-update și sincronizare versională dinamică."
+    "Refacere completă UI v2.0: Design Glassmorphic ultra-premium, degradeuri neon și micro-animații fluide.",
+    "Compatibilitate 100% bilingvă (Română / Engleză) pe toate paginile și modulele.",
+    "Sistem de actualizare rapidă cu protecție automată a datelor locale (SQLite DB, produse și licență).",
+    "Filtru vizual Dark Mode îmbunătățit cu contrast înalt pentru meniurile dropdown și opțiunile de selecție.",
+    "Optimizare performanță și încărcare pagini cu loader hibrid animat."
   ],
   "downloadUrl": "https://github.com/nosenseofficial7-del/ai-emag-assistant/releases/latest/download/AI-eMAG-Assistant-Setup.exe"
 }

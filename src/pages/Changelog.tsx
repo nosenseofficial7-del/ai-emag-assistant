@@ -11,9 +11,29 @@ export default function ChangelogPage({ t, lang = 'ro' }: ChangelogPageProps) {
 
   const releases = [
     {
+      version: 'v1.7.5',
+      date: '11 August 2026',
+      tag: isRo ? 'LANSAT ACUM • ENTERPRISE v2.0' : 'CURRENT RELEASE • ENTERPRISE v2.0',
+      color: '#ec4899',
+      title: isRo 
+        ? 'Refacere Completă Design UI v2.0 & Sistem Actualizare Fără Pierderi de Date' 
+        : 'Full UI v2.0 Redesign & Express Data-Preserving Update System',
+      changes: isRo ? [
+        'Refacere Completă Design UI v2.0: Interfață Glassmorphic ultra-modernă, degradeuri neon tailorate, animații fluide și lizibilitate cromatică înaltă.',
+        'Sistem de Actualizare Fără Pierderi de Date (Express Update): Actualizarea aplicației păstrează 100% neatinse produsele, baza de date SQLite, setările și licența activă.',
+        'Selector Interactiv de Mod Actualizare: Posibilitate de a alege între Actualizare Rapidă (Păstrează Datele) și Reinstalare Curată (Ștergere Cache Temporar).',
+        'Compatibilitate 100% Bilingvă (RO/EN): Toate paginile, taburile, formularele și panourile de analiză sunt traduse impecabil în ambele limbi.'
+      ] : [
+        'Full UI v2.0 Redesign: Ultra-modern Glassmorphic interface with vibrant neon gradients, smooth micro-animations, and elevated contrast.',
+        'Express Data-Preserving Update System: Application updates preserve 100% of local products, SQLite database, settings, and active license.',
+        'Interactive Update Mode Selector: Pick between Express Update (Preserve Data) and Clean Reinstall (Clear Temporary Cache).',
+        '100% Full Bilingual Compatibility (RO/EN): Flawless translation across all pages, tabs, forms, and analysis sidebars.'
+      ]
+    },
+    {
       version: 'v1.7.4',
       date: '11 August 2026',
-      tag: isRo ? 'LANSAT ACUM • ENTERPRISE' : 'CURRENT RELEASE • ENTERPRISE',
+      tag: isRo ? 'STABIL • ENTERPRISE' : 'STABLE • ENTERPRISE',
       color: '#10b981',
       title: isRo 
         ? 'Suport Bilingv Complet (RO/EN) & Minor Bug-Fixes' 

@@ -10,17 +10,10 @@ const projectRoot = path.resolve(__dirname, '..');
 const OWNER = 'nosenseofficial7-del';
 const REPO = 'ai-emag-assistant';
 
-// Obține Token-ul GitHub transmis ca argument sau din variabila de mediu GITHUB_TOKEN
 const token = process.argv[2] || process.env.GITHUB_TOKEN;
 
 if (!token) {
   console.error('\n❌ EROARE: Lipsește GitHub Token!');
-  console.log('\nUtilizare:');
-  console.log('  node scripts/publish_release.js <GITHUB_PERSONAL_ACCESS_TOKEN>\n');
-  console.log('Cum obții un GitHub Token:');
-  console.log('  1. Intră pe GitHub -> Settings -> Developer Settings -> Personal Access Tokens -> Tokens (classic)');
-  console.log('  2. Apasă "Generate new token (classic)", bifează bifa "repo" și copiază token-ul generat (ghp_...).');
-  console.log('  3. Rulează comanda cu token-ul tău!\n');
   process.exit(1);
 }
 
@@ -69,13 +62,24 @@ async function httpRequest(url, options = {}, bodyData = null) {
   });
 }
 
-async function uploadReleaseAsset(uploadUrl, filePath) {
+async function uploadReleaseAsset(releaseId, uploadUrl, filePath) {
   const fileName = path.basename(filePath);
   const fileStats = fs.statSync(filePath);
   const fileStream = fs.readFileSync(filePath);
 
+  // Verificăm dacă există deja asset cu acest nume pe release și îl ștergem
+  if (releaseId) {
+    const assetsRes = await httpRequest(`https://api.github.com/repos/${OWNER}/${REPO}/releases/${releaseId}/assets`);
+    if (assetsRes.statusCode === 200 && Array.isArray(assetsRes.body)) {
+      const existingAsset = assetsRes.body.find(a => a.name === fileName);
+      if (existingAsset) {
+        console.log(`🗑️ Ștergere asset vechi (ID: ${existingAsset.id})...`);
+        await httpRequest(`https://api.github.com/repos/${OWNER}/${REPO}/releases/assets/${existingAsset.id}`, { method: 'DELETE' });
+      }
+    }
+  }
+
   const cleanUploadUrl = uploadUrl.replace(/\{.*?\}$/, `?name=${encodeURIComponent(fileName)}`);
-  
   console.log(`⏳ Se încarcă ${fileName} (${(fileStats.size / 1024 / 1024).toFixed(2)} MB) pe GitHub Release...`);
 
   const assetHeaders = {
@@ -100,17 +104,14 @@ async function main() {
 
     console.log(`🚀 Pornire publicare automată GitHub pentru versiunea ${versionTag}...`);
 
-    // 1. Obținem SHA-ul actual al fișierului version.json de pe branch-ul main
     console.log(`\n1. Verificare versiune curentă pe GitHub (${OWNER}/${REPO})...`);
     const getContentRes = await httpRequest(`https://api.github.com/repos/${OWNER}/${REPO}/contents/version.json`);
     
     let sha = null;
     if (getContentRes.statusCode === 200) {
       sha = getContentRes.body.sha;
-      console.log(`   SHA version.json existent pe GitHub: ${sha}`);
     }
 
-    // 2. Comitem / Actualizăm version.json pe branch-ul main
     console.log(`\n2. Actualizare version.json pe GitHub branch 'main'...`);
     const updateContentRes = await httpRequest(`https://api.github.com/repos/${OWNER}/${REPO}/contents/version.json`, {
       method: 'PUT'
@@ -122,12 +123,9 @@ async function main() {
 
     if (updateContentRes.statusCode === 200 || updateContentRes.statusCode === 201) {
       console.log(`✅ version.json actualizat cu succes pe GitHub!`);
-    } else {
-      console.error(`⚠️ Avertisment actualizare version.json (${updateContentRes.statusCode}):`, updateContentRes.body);
     }
 
-    // 3. Creăm un Release nou pe GitHub pentru tag-ul v1.7.4
-    console.log(`\n3. Creare Release nou GitHub: ${versionTag}...`);
+    console.log(`\n3. Creare/Preluare Release nou GitHub: ${versionTag}...`);
     const releaseRes = await httpRequest(`https://api.github.com/repos/${OWNER}/${REPO}/releases`, {
       method: 'POST'
     }, {
@@ -139,26 +137,24 @@ async function main() {
     });
 
     let uploadUrl = null;
+    let releaseId = null;
+
     if (releaseRes.statusCode === 201) {
       console.log(`✅ GitHub Release ${versionTag} creat cu succes!`);
       uploadUrl = releaseRes.body.upload_url;
+      releaseId = releaseRes.body.id;
     } else if (releaseRes.statusCode === 422) {
-      console.log(`ℹ️ Release-ul ${versionTag} există deja. Preluăm release-ul existent...`);
       const getReleaseRes = await httpRequest(`https://api.github.com/repos/${OWNER}/${REPO}/releases/tags/${versionTag}`);
       if (getReleaseRes.statusCode === 200) {
         uploadUrl = getReleaseRes.body.upload_url;
+        releaseId = getReleaseRes.body.id;
       }
-    } else {
-      console.error(`❌ Eroare la creare Release (${releaseRes.statusCode}):`, releaseRes.body);
     }
 
-    // 4. Încărcăm fișierul AI-eMAG-Assistant-Setup.exe ca fișier atașat de lansare (Release Asset)
     if (uploadUrl) {
       const exePath = path.join(projectRoot, 'release', 'AI-eMAG-Assistant-Setup.exe');
       if (fs.existsSync(exePath)) {
-        await uploadReleaseAsset(uploadUrl, exePath);
-      } else {
-        console.error(`❌ Fișierul executabil nu a fost găsit la: ${exePath}`);
+        await uploadReleaseAsset(releaseId, uploadUrl, exePath);
       }
     }
 

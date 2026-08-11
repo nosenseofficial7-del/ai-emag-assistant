@@ -222,7 +222,7 @@ export const translations: Record<'ro' | 'en', TranslationSet> = {
     navChangelog: "Jurnal Schimbari",
     statusOnline: "ONLINE",
     statusOffline: "OFFLINE",
-    versionLabel: "Versiunea 1.7.4 (RO/EN)",
+    versionLabel: "Versiunea 1.7.5 (RO/EN)",
     storageLabel: "Stocare Locala SQLite",
     copyrightLabel: "Copyright: NoSense 2026",
 
@@ -419,7 +419,7 @@ export const translations: Record<'ro' | 'en', TranslationSet> = {
     navChangelog: "Changelog",
     statusOnline: "ONLINE",
     statusOffline: "OFFLINE",
-    versionLabel: "Version 1.7.4 (RO/EN)",
+    versionLabel: "Version 1.7.5 (RO/EN)",
     storageLabel: "Local SQLite Storage",
     copyrightLabel: "Copyright: NoSense 2026",
 
