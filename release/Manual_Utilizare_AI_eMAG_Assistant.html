@@ -1,0 +1,681 @@
+<!DOCTYPE html>
+<html lang="ro">
+<head>
+  <meta charset="UTF-8">
+  <title>Manual Oficial de Utilizare - AI eMAG Assistant</title>
+  <style>
+    @page {
+      size: A4;
+      margin: 18mm 15mm 20mm 15mm;
+      @bottom-right {
+        content: "Pagina " counter(page);
+      }
+    }
+    
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      color: #1e293b;
+      background: #ffffff;
+      line-height: 1.6;
+      font-size: 10.5pt;
+      margin: 0;
+      padding: 0;
+    }
+
+    h1, h2, h3, h4, h5 {
+      color: #0f172a;
+      font-weight: 700;
+      margin-top: 22px;
+      margin-bottom: 10px;
+      page-break-after: avoid;
+    }
+
+    h1 {
+      font-size: 22pt;
+      border-bottom: 3px solid #3b82f6;
+      padding-bottom: 8px;
+      margin-top: 30px;
+    }
+
+    h2 {
+      font-size: 16pt;
+      border-bottom: 1.5px solid #e2e8f0;
+      padding-bottom: 6px;
+      color: #1e3a8a;
+    }
+
+    h3 {
+      font-size: 12.5pt;
+      color: #2563eb;
+    }
+
+    p {
+      margin-bottom: 12px;
+      text-align: justify;
+    }
+
+    ul, ol {
+      margin-top: 4px;
+      margin-bottom: 12px;
+      padding-left: 24px;
+    }
+
+    li {
+      margin-bottom: 6px;
+    }
+
+    /* Cover Page */
+    .cover-page {
+      page-break-after: always;
+      height: 940px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      box-sizing: border-box;
+      padding: 50px 30px;
+      background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+      color: #ffffff;
+      border-radius: 12px;
+    }
+
+    .cover-header {
+      border-bottom: 2px solid #3b82f6;
+      padding-bottom: 20px;
+    }
+
+    .cover-badge {
+      display: inline-block;
+      background: rgba(59, 130, 246, 0.2);
+      color: #60a5fa;
+      border: 1px solid rgba(59, 130, 246, 0.4);
+      padding: 6px 16px;
+      border-radius: 20px;
+      font-weight: 600;
+      font-size: 10pt;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+
+    .cover-title {
+      font-size: 30pt;
+      font-weight: 800;
+      margin: 25px 0 10px 0;
+      line-height: 1.15;
+      color: #ffffff;
+    }
+
+    .cover-title span {
+      color: #3b82f6;
+    }
+
+    .cover-subtitle {
+      font-size: 13pt;
+      color: #94a3b8;
+      margin-bottom: 30px;
+    }
+
+    .cover-features {
+      background: rgba(255, 255, 255, 0.05);
+      border-left: 4px solid #10b981;
+      padding: 20px;
+      border-radius: 6px;
+      margin-top: 30px;
+    }
+
+    .cover-features h4 {
+      margin: 0 0 10px 0;
+      color: #10b981;
+      font-size: 12pt;
+    }
+
+    .cover-features ul {
+      margin: 0;
+      padding-left: 20px;
+      color: #cbd5e1;
+    }
+
+    .cover-footer {
+      border-top: 1px solid rgba(255, 255, 255, 0.1);
+      padding-top: 20px;
+      display: flex;
+      justify-content: space-between;
+      font-size: 9.5pt;
+      color: #94a3b8;
+    }
+
+    /* Callout Boxes */
+    .callout {
+      padding: 14px 18px;
+      border-radius: 8px;
+      margin: 16px 0;
+      font-size: 10pt;
+      page-break-inside: avoid;
+    }
+
+    .callout-info {
+      background-color: #eff6ff;
+      border-left: 4px solid #3b82f6;
+      color: #1e40af;
+    }
+
+    .callout-success {
+      background-color: #ecfdf5;
+      border-left: 4px solid #10b981;
+      color: #065f46;
+    }
+
+    .callout-warning {
+      background-color: #fffbeb;
+      border-left: 4px solid #f59e0b;
+      color: #92400e;
+    }
+
+    .callout-danger {
+      background-color: #fef2f2;
+      border-left: 4px solid #ef4444;
+      color: #991b1b;
+    }
+
+    .callout-title {
+      font-weight: 700;
+      margin-bottom: 4px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    /* Tables */
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 16px 0;
+      font-size: 9.5pt;
+      page-break-inside: avoid;
+    }
+
+    th, td {
+      padding: 10px 12px;
+      text-align: left;
+      border-bottom: 1px solid #e2e8f0;
+    }
+
+    th {
+      background-color: #f8fafc;
+      color: #334155;
+      font-weight: 600;
+      border-top: 1px solid #cbd5e1;
+    }
+
+    tr:nth-child(even) {
+      background-color: #f1f5f9;
+    }
+
+    /* UI Badge Component Styling */
+    .btn-badge {
+      display: inline-block;
+      padding: 3px 8px;
+      border-radius: 4px;
+      font-weight: 600;
+      font-size: 9pt;
+      color: #ffffff;
+    }
+    .btn-green { background-color: #10b981; }
+    .btn-red { background-color: #ef4444; }
+    .btn-blue { background-color: #3b82f6; }
+    .btn-gray { background-color: #64748b; }
+
+    /* Code & Keyboard */
+    code {
+      background: #f1f5f9;
+      color: #0f172a;
+      padding: 2px 6px;
+      border-radius: 4px;
+      font-family: monospace;
+      font-size: 9pt;
+      border: 1px solid #e2e8f0;
+    }
+
+    pre {
+      background: #0f172a;
+      color: #38bdf8;
+      padding: 14px;
+      border-radius: 8px;
+      overflow-x: auto;
+      font-family: monospace;
+      font-size: 9pt;
+      line-height: 1.45;
+    }
+
+    .page-break {
+      page-break-after: always;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- COPERTĂ OFICIALĂ -->
+  <div class="cover-page">
+    <div class="cover-header">
+      <span class="cover-badge">Ghid Tehnic & Manual de Utilizare Complet v1.6.4</span>
+      <h1 class="cover-title">AI eMAG <span>Assistant</span></h1>
+      <div class="cover-subtitle">Platformă de Arbitraj Comercial, Vânătoare B2B & Analiză Financiară eMAG Marketplace</div>
+    </div>
+
+    <div>
+      <p style="color: #cbd5e1; font-size: 11pt;">
+        Acest manual reprezintă ghidul oficial pas-cu-pas de utilizare a aplicației <strong>AI eMAG Assistant</strong>.
+        Documentul explică în detaliu fiecare buton, fereastră, configurare de API-uri AI (Google Gemini, OpenAI, Claude),
+        importuri de cataloage și algoritmi financiari de calcul ROI.
+      </p>
+
+      <div class="cover-features">
+        <h4>⚡ Funcționalități Cheie Incluse în Versiunea Curentă:</h4>
+        <ul>
+          <li><strong>Vânătoare Live Online B2B:</strong> Scanare real-time pe furnizorii Maxy B2B, VERK Wholesale și EANY Dropship.</li>
+          <li><strong>Asistent AI Bilingv:</strong> RAG interactiv, Sourcing Agent și traducător SQL automat.</li>
+          <li><strong>Comparare Directă eMAG:</strong> Butoane dedicate 🟢 <em>Vezi Furnizor</em> și 🔴 <em>Vezi eMAG</em> fără erori 404.</li>
+          <li><strong>Arhitectură Privată Nativă:</strong> Stocare 100% securizată în baza de date SQLite locală.</li>
+          <li><strong>Sistem de Persistență Dublă:</strong> Salvare sincronizată SQLite + Backup LocalStorage.</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="cover-footer">
+      <div>Dezvoltator: <strong>NoSense</strong></div>
+      <div>Valabilitate Licență: <strong>2026</strong></div>
+      <div>Sistem Operare: <strong>Windows 10 / 11 (64-bit)</strong></div>
+    </div>
+  </div>
+
+  <!-- CUPRINS -->
+  <h1>Cuprins General</h1>
+  <ol style="font-size: 11pt; line-height: 1.8;">
+    <li><strong>Capitolul 1: Introducere și Arhitectura Aplicației</strong></li>
+    <li><strong>Capitolul 2: Ghid Pas cu Pas - Configurare Cheie API Google Gemini Gratuită & LLM-uri</strong></li>
+    <li><strong>Capitolul 3: Navigare & Meniul Lateral (Explicația Fiecărui Buton)</strong></li>
+    <li><strong>Capitolul 4: Modulul Product Hunter (Vânătoare Oportunități Live & B2B)</strong></li>
+    <li><strong>Capitolul 5: Modulul Asistent AI (Sourcing Agent, Căutări & SQL)</strong></li>
+    <li><strong>Capitolul 6: Modulul Produsele Mele & Catalogul Local SQLite</strong></li>
+    <li><strong>Capitolul 7: Modulul Import Wizard & Integrare API eMAG Marketplace</strong></li>
+    <li><strong>Capitolul 8: Calculatorul de Profit & Formula Financiară eMAG</strong></li>
+    <li><strong>Capitolul 9: Personalizare Interfață, Animații & Exporturi Rapoarte</strong></li>
+    <li><strong>Capitolul 10: Întrebări Frecvente & Ghid de Depanare (Troubleshooting)</strong></li>
+  </ol>
+
+  <div class="page-break"></div>
+
+  <!-- CAPITOLUL 1 -->
+  <h1>Capitolul 1: Introducere și Arhitectura Aplicației</h1>
+  
+  <p>
+    <strong>AI eMAG Assistant</strong> este o aplicație desktop de înaltă performanță proiectată pentru vânzătorii eMAG Marketplace și antreprenorii e-commerce. Aplicația automatizează procesul de <em>arbitraj comercial</em>, identificând produse en-gros ieftine la furnizori europeni B2B și comparându-le instantaneu cu cererea și prețurile existente pe eMAG Marketplace.
+  </p>
+
+  <h2>1.1 Securitate & Arhitectură SQLite Locală</h2>
+  <p>
+    Spre deosebire de aplicațiile web SaaS care stochează datele comerciale pe servere externe terțe, <strong>AI eMAG Assistant</strong> funcționează pe o arhitectură nativă <strong>100% locală</strong>.
+  </p>
+  <ul>
+    <li><strong>Bază de Date SQLite Privată:</strong> Toate produsele, prețurile de achiziție, furnizorii și analizele financiare sunt stocate exclusiv pe hard disk-ul calculatorului tău în fișierul <code>ai_emag_assistant.db</code>.</li>
+    <li><strong>Confidențialitate Totală:</strong> Nimeni altcineva nu are acces la strategiile tale de nișă sau la produsele tale profitabile.</li>
+  </ul>
+
+  <h2>1.2 Licențiere & Activare (Activation Key)</h2>
+  <p>
+    La prima lansare a aplicației, este necesar un <strong>Cod de Activare (Activation Key)</strong> valid furnizat exclusiv de dezvoltatorul <strong>NoSense</strong>.
+  </p>
+  <div class="callout callout-info">
+    <div class="callout-title">🔑 Cum funcționează activarea?</div>
+    Efectuezi lipirea codului primit în ecranul de Activare. Aplicația validează codul cryptographic și salvează licența permanent în baza de date. Dacă întâmpini probleme cu licența, verifică data și ora calculatorului tău.
+  </div>
+
+  <h2>1.3 Splash Screen (8s) & Transition Loader (2.5s)</h2>
+  <p>
+    Aplicația integrează două ecrane cyber-animate profesionale pentru a garanta o experiență vizuală premium:
+  </p>
+  <ul>
+    <li><strong>Splash Screen de Pornire (8 secunde):</strong> Se afișează la deschiderea aplicației, inițializând conexiunile SQLite, motorul AI și stocurile B2B. Poate fi parcurs lin sau trecut prin click.</li>
+    <li><strong>Page Transition Loader (2.5 secunde):</strong> La fiecare apăsare pe un buton din meniul lateral, apare un overlay animat cu inel cibernetic rotativ care afișează mesajul de tranziție (ex: <em>"Navigare spre Product Hunter..."</em>), oferind stabilitate și încărcare lină a componentei țintă.</li>
+  </ul>
+
+  <div class="page-break"></div>
+
+  <!-- CAPITOLUL 2 -->
+  <h1>Capitolul 2: Ghid Pas cu Pas - Configurare Cheie API Google Gemini Gratuită & LLM-uri</h1>
+
+  <p>
+    Asistentul AI din aplicație poate funcționa atât în modul offline/demo, cât și conectat la modele de ultimă generație precum <strong>Google Gemini 2.5 Flash</strong>, <strong>ChatGPT (OpenAI)</strong>, <strong>Anthropic Claude</strong> sau <strong>Ollama (Local)</strong>.
+  </p>
+
+  <h2>2.1 Pasul 1: Obținerea unei Chei API Gratuite Google Gemini</h2>
+  <p>
+    Google oferă acces gratuit (Free Tier) pentru modelul ultrarapid <strong>Gemini 2.5 Flash</strong> (1.500 de analize/zi gratuit, fără cerință de card bancar).
+  </p>
+
+  <ol style="line-height: 1.8;">
+    <li>Deschide browser-ul web și accesează adresa oficială: <br><code>https://aistudio.google.com/app/apikey</code></li>
+    <li>Autentifică-te folosind contul tău personal sau de companie Google (Gmail).</li>
+    <li>Apasă pe butonul albastru <strong>"Create API key"</strong>.</li>
+    <li>Selectează <em>"Create API key in new project"</em>.</li>
+    <li>Sistemul va genera o cheie privată de forma: <code>AIzaSyD...</code>. Apasă butonul de <strong>Copy</strong> (Copiază).</li>
+  </ol>
+
+  <div class="callout callout-success">
+    <div class="callout-title">💡 De ce recomandăm Google Gemini 2.5 Flash?</div>
+    Este în acest moment cel mai rapid model AI de pe piață, optimizat pentru traducerea în timp real a întrebărilor comerciale și pentru generarea de analize de stoc concise în limba română.
+  </div>
+
+  <h2>2.2 Pasul 2: Salvarea Cheii în Aplicație</h2>
+  <ol style="line-height: 1.8;">
+    <li>În aplicația <strong>AI eMAG Assistant</strong>, dă click pe butonul <strong>⚙️ Setări</strong> din meniul lateral.</li>
+    <li>Derulează până la cardul <strong>🤖 Asistent Inteligență Artificială (AI Config)</strong>.</li>
+    <li>La opțiunea <strong>Furnizor AI (Provider)</strong>, alege <code>Google Gemini</code>.</li>
+    <li>În câmpul <strong>Gemini / OpenAI API Key</strong>, lipește cheia copiată (<code>AIzaSy...</code>).</li>
+    <li>La câmpul <strong>Model AI / Versiune</strong>, folosește selectorul drop-down și alege:<br><code>gemini-2.5-flash (Gratuit / Recomandat - Ultra Rapid)</code>.</li>
+    <li>Apasă butonul verde <strong>"💾 Salvează Configurația AI"</strong>.</li>
+  </ol>
+
+  <div class="callout callout-info">
+    <div class="callout-title">🛡️ Sistem de Persistență Dublă (SQLite + LocalStorage)</div>
+    Aplicația folosește o salvare sincronizată dublă. Configurarea AI este salvată simultan în tabela <code>settings</code> din SQLite și în memoria <code>localStorage</code>, garantând că selecția ta nu se va reseta niciodată pe Demo.
+  </div>
+
+  <div class="page-break"></div>
+
+  <!-- CAPITOLUL 3 -->
+  <h1>Capitolul 3: Navigare & Meniul Lateral (Explicația Fiecărui Buton)</h1>
+
+  <p>
+    Meniul lateral (Sidebar) este panoul principal de control al aplicației. Fiecare buton este optimizat cromatic și dotat cu pictograme intuitive.
+  </p>
+
+  <table>
+    <thead>
+      <tr>
+        <th style="width: 25%;">Iconiță & Nume Buton</th>
+        <th style="width: 20%;">ID Rută Interfață</th>
+        <th>Descriere & Rol În Aplicație</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>📊 Tablou de Comandă</strong></td>
+        <td><code>dashboard</code></td>
+        <td>Afișează rezumatul executiv: număr produse, valoare portofoliu, alerte Buybox și grafice de stoc.</td>
+      </tr>
+      <tr>
+        <td><strong>🌐 Product Hunter</strong></td>
+        <td><code>hunter</code></td>
+        <td>Modulul de vânătoare live online pe scală mare la furnizorii B2B și scanare SQLite.</td>
+      </tr>
+      <tr>
+        <td><strong>📦 Produsele Mele</strong></td>
+        <td><code>watchlist</code> / <code>products</code></td>
+        <td>Catalogul tău de produse salvate, editare prețuri, stocuri și urmărire alerte.</td>
+      </tr>
+      <tr>
+        <td><strong>🔎 Cercetare eMAG</strong></td>
+        <td><code>emag</code></td>
+        <td>Scraper direct pe eMAG Marketplace pentru căutarea de coduri EAN/cuvinte cheie.</td>
+      </tr>
+      <tr>
+        <td><strong>🤖 Asistent AI</strong></td>
+        <td><code>ai</code></td>
+        <td>Interfață chat RAG pentru întrebări despre stocuri și Sourcing Agent automat.</td>
+      </tr>
+      <tr>
+        <td><strong>📥 Import Wizard</strong></td>
+        <td><code>import</code></td>
+        <td>Asistent de import bulk fișiere CSV, XML, Excel și conectare eMAG API.</td>
+      </tr>
+      <tr>
+        <td><strong>🧮 Calculator Profit</strong></td>
+        <td><code>calculator</code></td>
+        <td>Simulator financiar pentru calculul exact al marjei nete, comisionului eMAG și ROI.</td>
+      </tr>
+      <tr>
+        <td><strong>⚙️ Setări</strong></td>
+        <td><code>settings</code></td>
+        <td>Panoul de configurări: API Keys, ponderi de oportunitate, culori UI și animații.</td>
+      </tr>
+      <tr>
+        <td><strong>📜 Jurnal Schimbări</strong></td>
+        <td><code>changelog</code></td>
+        <td>Istoricul versiunilor aplicației (v1.6.4 - v1.0.0) și jurnalele de actualizare.</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div class="page-break"></div>
+
+  <!-- CAPITOLUL 4 -->
+  <h1>Capitolul 4: Modulul Product Hunter (Vânătoare Oportunități Live & B2B)</h1>
+
+  <p>
+    <strong>Product Hunter</strong> este motorul principal de identificare a produselor profitabile. Acesta permite scanarea a mii de repere de la furnizori en-gros.
+  </p>
+
+  <h2>4.1 Cele Două Moduri de Vânătoare</h2>
+  <ul>
+    <li><strong style="color: #10b981;">🌐 Vânătoare Live Online (Internet & B2B):</strong> Scanează în timp real site-urile furnizorilor <strong>Maxy B2B</strong>, <strong>VERK Wholesale</strong> și <strong>EANY Dropship</strong>, comparând prețurile cu ofertele concurente de pe eMAG. Ordonează produsele <em>Cheapest First</em> (cel mai ieftin primul).</li>
+    <li><strong style="color: #3b82f6;">💾 Bază de Date Locală (SQLite):</strong> Filtrează produsele deja importate în baza de date locală pe baza criteriilor stabilite.</li>
+  </ul>
+
+  <h2>4.2 Filtrarea după Buget și Parametri Financiari</h2>
+  <ul>
+    <li><strong>Buget Maxim Achiziție Totală (RON):</strong> Suma maximă disponibilă pentru investiție (ex: 2.500 RON).</li>
+    <li><strong>Preț Maxim Produs / buc (RON):</strong> Costul maxim unitar de achiziție de la furnizor (ex: sub 75 RON / 15 EUR).</li>
+    <li><strong>Categorie:</strong> Auto, Electronice, Home & Deco, Jucării, Sport & Outdoor.</li>
+    <li><strong>Profit Net Minim (RON) & ROI Minim (%):</strong> Filtrează doar produsele care garantează rentabilitatea dorită.</li>
+  </ul>
+
+  <h2>4.3 Cardul Oportunității și Butoanele de Acțiune</h2>
+  <p>Fiecare produs identificat este afișat într-un card vizual modern ce include 3 butoane side-by-side:</p>
+
+  <ul style="list-style: none; padding-left: 0;">
+    <li style="margin-bottom: 10px;">
+      <span class="btn-badge btn-green">🟢 Vezi Furnizor</span> - Deschide direct pagina produsului pe site-ul furnizorului B2B en-gros.
+    </li>
+    <li style="margin-bottom: 10px;">
+      <span class="btn-badge btn-red">🔴 Vezi eMAG</span> - Deschide garanția de căutare live pe eMAG Marketplace <strong>fără erori 404</strong> pentru compararea concurenței.
+    </li>
+    <li style="margin-bottom: 10px;">
+      <span class="btn-badge btn-blue">🔵 Importă în DB</span> - Salvează produsul cu un singur click în baza ta de date SQLite locală.
+    </li>
+  </ul>
+
+  <h2>4.4 Verdictul Oportunității (Scor 0 - 100)</h2>
+  <table>
+    <thead>
+      <tr>
+        <th>Verdict AI</th>
+        <th>Interval Scor</th>
+        <th>Interpretare Financiară</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong style="color: #10b981;">CUMPĂRĂ</strong></td>
+        <td>Scor ≥ 75</td>
+        <td>Profit estimat excelent, marjă mare, concurență mică pe eMAG. Oportunitate top.</td>
+      </tr>
+      <tr>
+        <td><strong style="color: #10b981;">FOARTE BUN</strong></td>
+        <td>Scor 60 - 74</td>
+        <td>Oportunitate solidă cu un raport bun risc/beneficiu. Recomandat pentru testare stoc.</td>
+      </tr>
+      <tr>
+        <td><strong style="color: #f59e0b;">RISC MEDIU</strong></td>
+        <td>Scor 45 - 59</td>
+        <td>Necesită analiză atentă a prețului concurenței și a taxelor logistice.</td>
+      </tr>
+      <tr>
+        <td><strong style="color: #ef4444;">NU MERITĂ</strong></td>
+        <td>Scor &lt; 45</td>
+        <td>Marjă de profit prea mică, ROI negativ sau concurență extremă pe Buybox.</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div class="page-break"></div>
+
+  <!-- CAPITOLUL 5 -->
+  <h1>Capitolul 5: Modulul Asistent AI (Sourcing Agent, Căutări & SQL)</h1>
+
+  <p>
+    Modulul <strong>Asistent AI</strong> combină un sistem de chat în limba română cu un <strong>Agent de Sourcing Live în 5 Niveluri</strong>.
+  </p>
+
+  <h2>5.1 Routarea Automată a Intențiilor de Căutare</h2>
+  <p>
+    Orice întrebare care conține intenția de a găsi produse noi (ex: <em>"caută telefon"</em>, <em>"caută lămpi led monitor"</em>, <em>"găsește căști wireless"</em>) declanșează <strong>AUTOMAT</strong> Agentul de Sourcing Live.
+  </p>
+
+  <div class="callout callout-warning">
+    <div class="callout-title">🎯 Când se interoghează Baza de Date Locală SQLite?</div>
+    Interogările pe baza de date locală SQLite se efectuează doar când întrebi despre stocurile sau portofoliul tău (ex: <em>"ce produse am în stoc?"</em>, <em>"arată-mi produsele cu profit peste 40 lei"</em>).
+  </div>
+
+  <h2>5.2 Algoritmul de Căutare Garantată în 5 Niveluri (Scraper.js)</h2>
+  <p>Dacă un furnizor B2B nu găsește rezultate la o sintagmă exactă, sistemul trece prin 5 niveluri succesive:</p>
+  <ol>
+    <li><strong>Nivelul 1 (Expresie Exactă):</strong> Căutare directă pe fraza introdusă (ex: <em>"organizatoare auto"</em>).</li>
+    <li><strong>Nivelul 2 (Normalizare Plural/Singular):</strong> Convertește automat pluralul (ex: <em>"organizatoare"</em> ➔ <em>"organizator"</em>).</li>
+    <li><strong>Nivelul 3 (Căutare pe Cuvinte Cheie):</strong> Căutare pe cuvinte individuale.</li>
+    <li><strong>Nivelul 4 (Relevanță Contextuală Strictă):</strong> Filtrează produsele irelevante (elimină rafturile de casă la căutări auto) și accesează baza locală SQLite.</li>
+    <li><strong>Nivelul 5 (Fallback Garantat pe Catalog):</strong> Garantează afișarea opțiunilor B2B fără ca nicio căutare să returneze 0 produse.</li>
+  </ol>
+
+  <h2>5.3 Inspectarea Interogării SQL și Comanda "Mai Multe"</h2>
+  <ul>
+    <li><strong>Butonul <code>&gt;_ Vezi interogare SQLite rulată</code>:</strong> Îți permite să deschizi codul SQL tradus automat de AI pentru transparență totală.</li>
+    <li><strong>Comanda <em>"mai multe te rog"</em>:</strong> Dacă dorești mai multe produse, scrie simplu în chat <em>"mai multe te rog"</em>, iar AI-ul va aduce un nou lot de oportunități B2B.</li>
+  </ul>
+
+  <div class="page-break"></div>
+
+  <!-- CAPITOLUL 6 -->
+  <h1>Capitolul 6: Modulul Produsele Mele & Catalogul Local SQLite</h1>
+
+  <p>
+    În modulul <strong>Produsele Mele (Watchlist & Products)</strong> poți gestiona toate reperele salvate sau importate.
+  </p>
+
+  <h2>6.1 Funcții și Butoane în Catalog:</h2>
+  <ul>
+    <li><strong>🔍 Bara de Căutare & Filtrare:</strong> Filtrare instantanee după Nume, SKU, EAN sau Categorie.</li>
+    <li><strong>⭐ Watchlist (Favorite):</strong> Marcarea produselor cheie pentru urmărire prioritară.</li>
+    <li><strong>🗑️ Ștergere Produs:</strong> Eliminarea produselor depășite din baza locală.</li>
+    <li><strong>📊 Vezi Detalii Produs:</strong> Deschide fișa tehnică cu istoricul de prețuri, comisionul eMAG și graficul de rentabilitate.</li>
+  </ul>
+
+  <h1>Capitolul 7: Modulul Import Wizard & Integrare API eMAG Marketplace</h1>
+
+  <h2>7.1 Import Bulk (CSV / XML / Excel)</h2>
+  <p>
+    Poți importa cataloage mari de la alți furnizori încărcând fișiere <code>.csv</code>, <code>.xml</code> sau <code>.xlsx</code>. Modulul de Import îți permite maparea coloanelor:
+  </p>
+  <ul>
+    <li>Coloana SKU / Cod Produs</li>
+    <li>Coloana EAN (Cod de bare 13 cifre)</li>
+    <li>Coloana Titlu Produs & Descriere</li>
+    <li>Coloana Preț Achiziție & Stoc Furnizor</li>
+  </ul>
+
+  <h2>7.2 Integrare eMAG Marketplace API v3</h2>
+  <p>
+    În tab-ul de conectare eMAG API, poți introduce datele contului tău de Seller:
+  </p>
+  <ul>
+    <li><strong>Nume Utilizator API eMAG</strong></li>
+    <li><strong>Parolă API eMAG</strong></li>
+    <li><strong>URL Endpoint (ex: <code>https://marketplace-api.emag.ro/api-3/</code>)</strong></li>
+  </ul>
+  <p>
+    Apasă <strong>"Test Conexiune API"</strong> pentru validare, apoi <strong>"Sincronizează Produse eMAG"</strong> pentru a descărca automat stocurile și prețurile din contul tău eMAG Seller.
+  </p>
+
+  <div class="page-break"></div>
+
+  <!-- CAPITOLUL 8 -->
+  <h1>Capitolul 8: Calculatorul de Profit & Formula Financiară eMAG</h1>
+
+  <p>
+    Calculatorul de Profit simulează cu precizie de ban marja netă de profit pentru orice produs.
+  </p>
+
+  <h2>8.1 Formula Financiară Implementată:</h2>
+  <pre>
+Profit Net (RON) = Preț Vânzare eMAG (fără TVA) 
+                 - Cost Achiziție Furnizor 
+                 - Comision eMAG Categorie 
+                 - Cost Logistica & Transport (15.00 RON transport + 1.50 RON ambalare)
+                 - TVA Vânzare (19%)
+
+ROI (%) = (Profit Net / Cost Achiziție Furnizor) * 100
+  </pre>
+
+  <h2>8.2 Comisioane eMAG Implicite pe Categorii:</h2>
+  <table>
+    <thead>
+      <tr>
+        <th>Categorie Produs eMAG</th>
+        <th>Comision Procentual Implicite</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr><td>Auto & Accesorii Vehicule</td><td>16.0%</td></tr>
+      <tr><td>Electronice & IT</td><td>14.0%</td></tr>
+      <tr><td>Home & Deco / Casă</td><td>18.0%</td></tr>
+      <tr><td>Jucării & Copii</td><td>15.0%</td></tr>
+      <tr><td>Sport & Outdoor</td><td>16.0%</td></tr>
+      <tr><td>Grădină & Bricolaj</td><td>17.0%</td></tr>
+    </tbody>
+  </table>
+
+  <h1>Capitolul 9: Personalizare Interfață, Animații & Exporturi Rapoarte</h1>
+
+  <h2>9.1 Setări Interfață Vizuală (Theme & Animations)</h2>
+  <ul>
+    <li><strong>Culoare Accent Interfață:</strong> Cian Cyber, Smarald Emerald, Roz/Violet Neon, Chihlimbar Amber, Albastru Royal.</li>
+    <li><strong>Mod Animații UI:</strong> Fluide (implicit), Reduse sau Oprite.</li>
+    <li><strong>Densitate Date Ecran:</strong> Aerisit, Normal, Compact (pentru monitoare mici).</li>
+  </ul>
+
+  <h2>9.2 Exporturi Rapoarte (eMAG Excel & Feed XML)</h2>
+  <p>
+    Din pagina de produse sau din Calculator, poți apăsa butoanele de export:
+  </p>
+  <ul>
+    <li><strong>Export eMAG Excel (<code>.xlsx</code>):</strong> Generează fișierul pregătit pentru încărcare directă în eMAG Seller Dashboard.</li>
+    <li><strong>Export Feed XML (<code>.xml</code>):</strong> Generează un feed compatibil cu sistemele ERP/WMS.</li>
+  </ul>
+
+  <div class="page-break"></div>
+
+  <!-- CAPITOLUL 10 -->
+  <h1>Capitolul 10: Întrebări Frecvente & Ghid de Depanare (Troubleshooting)</h1>
+
+  <h2>10.1 Ce fac dacă primesc o eroare 503 de la Google Gemini?</h2>
+  <p>
+    Eroarea 503 înseamnă că serverele publice ale Google sunt temporar aglomerate. Aplicația reîncearcă automat de 2 ori. Dacă problema persistă, aplicația comută automat pe motorul inteligent local fără a bloca interfața.
+  </p>
+
+  <h2>10.2 De ce un buton "Vezi eMAG" a deschis o căutare pe eMAG în loc de un produs specific?</h2>
+  <p>
+    Am actualizat toate link-urile către eMAG folosind formatul de căutare live pe brand și titlu. Acest lucru previne apariția paginilor 404 (pagini mutate sau expirat) și îți garantează că vezi toate produsele concurente active din piață.
+  </p>
+
+  <h2>10.3 Unde găsesc jurnalele de erori și backup-ul bazei de date?</h2>
+  <p>
+    Intră în <strong>⚙️ Setări</strong> și apasă pe butonul <strong>"📁 Deschide Folder Logs"</strong>. Aplicația va deschide folderul din sistemul Windows unde găsești fișierele <code>app.log</code> și <code>ai_emag_assistant.db</code>.
+  </p>
+
+  <div class="callout callout-success" style="margin-top: 40px; text-align: center;">
+    <div class="callout-title" style="justify-content: center; font-size: 12pt;">🚀 AI eMAG Assistant - Versiunea 1.6.4</div>
+    Vă dorim vânzări maxime și profituri excelente pe eMAG Marketplace!<br>
+    Copyright © <strong>NoSense 2026</strong>. Toate drepturile rezervate.
+  </div>
+
+</body>
+</html>

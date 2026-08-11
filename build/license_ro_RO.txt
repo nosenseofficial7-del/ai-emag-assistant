@@ -1,0 +1,23 @@
+﻿ACORD DE LICENTA PENTRU UTILIZATORUL FINAL (EULA)
+APLICATIA: AI eMAG Assistant
+DEZVOLTATOR: NoSense
+
+Va rugam sa cititi cu atentie acest document inainte de a finaliza procesul de instalare. Prin instalarea, copierea sau utilizarea acestei aplicatii software, sunteti de acord sa respectati termenii si conditiile acestui acord.
+
+1. ACORDAREA LICENTEI
+NoSense va acorda o licenta limitata, neexclusiva, netransmisibila si revocabila pentru a descarca, instala si utiliza aplicatia "AI eMAG Assistant" pe un computer personal sau de serviciu care ruleaza sistemul de operare Windows 10/11, in conformitate cu termenii acestui acord.
+
+2. ACTIVAREA SI CODUL DE ACCES (ACTIVATION KEY)
+Utilizarea acestei aplicatii necesita un Cod de Activare valid furnizat exclusiv de catre NoSense. Licenta este valabila pentru un singur utilizator. Este strict interzisa distribuirea, partajarea sau publicarea codului de activare catre terte persoane. In cazul detectarii unei utilizari abuzive a aceleiasi chei, licenta poate fi suspendata instantaneu.
+
+3. CONECTIVITATE SI RESPONSABILITATI PRIVIND DATELE
+Aplicatia stocheaza toate datele comerciale, cataloagele de produse, preturile si portofoliul local in siguranta pe computerul dumneavoastra, utilizand o baza de date SQLite locala. NoSense nu are acces la datele dumneavoastra comerciale.
+Sunteti singurul responsabil pentru configurarea API Key-urilor terte (ex: Google Gemini, OpenAI, Claude, eMAG Partner API) si pentru costurile aferente acestora.
+
+4. EXCLUDEREA GARANTIEI
+Software-ul este furnizat "CA ATARE" (AS IS), fara nicio garantie de orice fel, expresa sau implicita. Dezvoltatorul nu garanteaza ca functionarea scraperelor terte (de exemplu eMAG Marketplace) va fi neintrerupta, avand in vedere ca structura paginilor web externe se poate schimba fara preaviz. NoSense nu este responsabil pentru eventualele penalizari primite pe platforma eMAG Marketplace.
+
+5. PROPRIETATE INTELECTUALA
+Toate drepturile de autor si alte drepturi de proprietate intelectuala legate de AI eMAG Assistant apartin exclusiv NoSense (2026).
+
+Prin apasarea butonului "Sunt de acord" (I Agree), confirmati ca ati inteles si acceptat acesti termeni.

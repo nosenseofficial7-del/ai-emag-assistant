@@ -1,0 +1,23 @@
+﻿END USER LICENSE AGREEMENT (EULA)
+APPLICATION: AI eMAG Assistant
+DEVELOPER: NoSense
+
+Please read this document carefully before completing the installation process. By installing, copying, or using this software application, you agree to be bound by the terms and conditions of this agreement.
+
+1. LICENSE GRANT
+NoSense grants you a limited, non-exclusive, non-transferable, and revocable license to download, install, and use the "AI eMAG Assistant" application on a personal or work computer running Windows 10/11, in accordance with the terms of this agreement.
+
+2. ACTIVATION AND ACCESS CODE (ACTIVATION KEY)
+Use of this application requires a valid Activation Key provided exclusively by NoSense. The license is valid for a single user. Distributing, sharing, or publishing the activation key to third parties is strictly prohibited. In case of detecting abusive use of the same key, the license can be instantly suspended.
+
+3. CONNECTIVITY AND DATA RESPONSIBILITIES
+The application stores all commercial data, product catalogs, prices, and the local portfolio securely on your computer using a local SQLite database. NoSense has no access to your commercial data.
+You are solely responsible for configuring third-party API Keys (e.g., Google Gemini, OpenAI, Claude, eMAG Partner API) and for their associated costs.
+
+4. WARRANTY DISCLAIMER
+The software is provided "AS IS", without warranty of any kind, express or implied. The developer does not warrant that the operation of third-party scrapers (e.g. eMAG Marketplace) will be uninterrupted, given that the structure of external web pages can change without notice. NoSense is not responsible for any penalties received on the eMAG Marketplace platform.
+
+5. INTELLECTUAL PROPERTY
+All copyrights and other intellectual property rights related to AI eMAG Assistant belong exclusively to NoSense (2026).
+
+By pressing the "I Agree" button, you confirm that you have understood and accepted these terms.
