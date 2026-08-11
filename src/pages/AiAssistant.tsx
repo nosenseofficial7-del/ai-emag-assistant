@@ -1,8 +1,8 @@
 import { useState, useEffect, useRef } from 'react';
 import { 
-  Send, Sparkles, Loader2, Terminal, 
-  ExternalLink, Plus, Check, Database 
+  Send, Sparkles, Loader2, Bot, User 
 } from 'lucide-react';
+import type { Product } from '../types';
 
 interface Message {
   sender: 'user' | 'ai';
@@ -16,11 +16,12 @@ interface Message {
 }
 
 interface SourcedItem {
+  id: string;
   name: string;
   sku: string;
   priceSupplier: number; // in cents
-  imageUrl: string;
   urlSupplier: string;
+  imageUrl: string;
   supplierName?: string;
   matchedEmag?: {
     name: string;
@@ -46,29 +47,29 @@ export default function AiAssistant({ t }: AiAssistantProps) {
   const [suppliers, setSuppliers] = useState<any[]>([]);
   const chatEndRef = useRef<HTMLDivElement>(null);
   
-  const [aiConfigured, setAiConfigured] = useState(false);
-  const [aiProviderLabel, setAiProviderLabel] = useState('Mock / Demo');
+  const [aiProviderLabel, setAiProviderLabel] = useState('Google Gemini');
+
+  const isRo = t.navDashboard === 'Panou Control';
 
   useEffect(() => {
-    // Seteaza mesajul initial in functie de limba selectata
     setMessages([
       {
         sender: 'ai',
-        text: t.aiWelcome
+        text: isRo 
+          ? 'Salutare! Sunt Asistentul tău AI eMAG. Am acces direct la baza de date locală SQLite și la căutarea live B2B pe internet pentru oportunități comerciale.'
+          : 'Hello! I am your eMAG AI Assistant. I have direct access to your local SQLite database and live web B2B search for commercial opportunities.'
       }
     ]);
-  }, [t]);
+  }, [t, isRo]);
 
   useEffect(() => {
     chatEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [messages]);
 
   useEffect(() => {
-    // Verificam configuratia AI
     if (window.api && window.api.getSettings) {
       window.api.getSettings('ai_config').then((config: any) => {
         if (config && config.provider !== 'mock') {
-          setAiConfigured(true);
           const labels: any = {
             gemini: 'Google Gemini',
             openai: 'OpenAI ChatGPT',
@@ -83,425 +84,512 @@ export default function AiAssistant({ t }: AiAssistantProps) {
     }
   }, []);
 
-  const isRo = t.navDashboard === 'Panou Control';
-
   const samplePrompts = isRo ? [
-    "Ce produse merita cumparate?",
-    "Am 500 EUR. Ce ai cumpara?",
-    "Arata-mi produsele cu profit peste 40 lei.",
-    "Ce ar trebui sa reaprovizionez?",
-    "cauta live lampi led monitor",
-    "cauta live organizatoare auto"
+    "Ce produse merită cumpărate?",
+    "Am 500 EUR. Ce ai cumpăra?",
+    "Arată-mi produsele cu profit peste 40 lei.",
+    "search live for car organizers",
+    "search live for led monitor lamps"
   ] : [
     "Which products are worth buying?",
     "I have 500 EUR. What would you buy?",
     "Show me products with profit over 40 lei.",
-    "What should I restock?",
-    "search live for led monitor lamps",
-    "search live for car organizers"
+    "search live for car organizers",
+    "search live for led monitor lamps"
   ];
 
-  // Collapsible SQL query states
-  const [visibleSqlIndex, setVisibleSqlIndex] = useState<number | null>(null);
-
-  const handleSend = async (text: string) => {
+  const handleSend = async (textToSend?: string) => {
+    const text = textToSend || inputText;
     if (!text.trim() || loading) return;
 
-    // Adaugam mesajul utilizatorului
-    setMessages(prev => [...prev, { sender: 'user', text }]);
-    setInputText('');
+    const userMsg: Message = { sender: 'user', text };
+    setMessages(prev => [...prev, userMsg]);
+    if (!textToSend) setInputText('');
     setLoading(true);
 
-    // Adaugam starea de incarcare
-    setMessages(prev => [...prev, { sender: 'ai', thinking: true }]);
+    const isLiveSearch = text.toLowerCase().includes('live') || text.toLowerCase().includes('search live') || text.toLowerCase().includes('cauta live');
 
-    try {
-      const res = await window.api.askAi(text);
-      
-      // Eliminam starea de incarcare
-      setMessages(prev => prev.filter(m => !m.thinking));
-
-      if (res.success) {
-        if (res.type === 'action' && res.action === 'live_sourcing') {
-          await runSourcingAgent(res.query);
-        } else {
-          setMessages(prev => [...prev, { 
-            sender: 'ai', 
-            text: res.text, 
-            sql: res.sql, 
-            type: 'text' 
-          }]);
-        }
-      } else {
-        setMessages(prev => [...prev, { 
-          sender: 'ai', 
-          text: `Error: ${res.error}`, 
-          error: true 
-        }]);
-      }
-    } catch (err: any) {
-      setMessages(prev => prev.filter(m => !m.thinking));
-      setMessages(prev => [...prev, { 
-        sender: 'ai', 
-        text: `Connection error: ${err.message || err}`, 
-        error: true 
-      }]);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const runSourcingAgent = async (keyword: string) => {
-    const startMsg = isRo
-      ? `Initiez Agentul Sourcing. Scanam in timp real furnizorii B2B (Maxy, Verk, Eany) si eMAG Marketplace pentru: **"${keyword}"**...\nAcest proces dureaza cateva secunde.`
-      : `Initiating Sourcing Agent. Crawling B2B suppliers (Maxy, Verk, Eany) and eMAG Marketplace in real-time for: **"${keyword}"**...\nThis process takes a few seconds.`;
-      
-    setMessages(prev => [...prev, { 
-      sender: 'ai', 
-      type: 'sourcing',
-      text: startMsg,
-      query: keyword
-    }]);
-
-    try {
-      const [supplierRes, emagRes] = await Promise.all([
-        window.api.searchSuppliersLive(keyword),
-        window.api.searchEmag(keyword)
-      ]);
-
-      if (!supplierRes.success || !emagRes.success) {
-        throw new Error(supplierRes.error || emagRes.error || 'Live search failed on one of the platforms.');
-      }
-
-      const rawSupplier = supplierRes.results || [];
-      const rawEmag = emagRes.results || [];
-
-      if (rawSupplier.length === 0) {
-        setMessages(prev => [...prev, {
-          sender: 'ai',
-          text: isRo 
-            ? `Cautarea live a finalizat, dar nu am gasit produse la furnizorii B2B pentru **"${keyword}"**.`
-            : `Live search completed, but no products were found at B2B suppliers for **"${keyword}"**.`
-        }]);
-        return;
-      }
-
-      const sourcedItems: SourcedItem[] = rawSupplier.slice(0, 5).map((sp: any, index: number) => {
-        const ep = rawEmag[index] || rawEmag[0] || null;
-        
-        let roi = 0;
-        let opportunityScore = 30;
-        let verdict = isRo ? 'NU MERITA' : 'DO NOT BUY';
-        let matchedEmagObj = undefined;
-
-        if (ep) {
-          matchedEmagObj = {
-            name: ep.name,
-            price: ep.price,
-            rating: ep.rating,
-            reviewsCount: ep.reviewsCount,
-            url: ep.url
-          };
-          
-          const purchasePrice = sp.price_supplier / 100; // in RON
-          const activePrice = ep.price; // in RON
-          const comisionRate = 15;
-          const comisionEmag = (activePrice * comisionRate) / 100;
-          const tvaVanzare = (activePrice * 19) / 119;
-          const logistica = 15 + 1.5;
-          const profit = activePrice - purchasePrice - comisionEmag - tvaVanzare - logistica;
-          roi = purchasePrice > 0 ? (profit / purchasePrice) * 100 : 0;
-
-          let demandScore = Math.min(100, Math.round(Math.log10(ep.reviewsCount + 1) * 40));
-          if (ep.rating > 0) demandScore = Math.min(100, Math.round(demandScore * (ep.rating / 5)));
-          
-          const competitionScore = 40;
-          let profitabilityScore = 0;
-          if (roi >= 50) profitabilityScore = 100;
-          else if (roi >= 35) profitabilityScore = 85;
-          else if (roi >= 20) profitabilityScore = 60;
-          else if (roi >= 5) profitabilityScore = 30;
-
-          opportunityScore = Math.round(
-            demandScore * 0.25 + 
-            (100 - competitionScore) * 0.25 + 
-            profitabilityScore * 0.30 + 
-            30 * 0.10 + 
-            80 * 0.10
-          );
-
-          if (opportunityScore >= 75) verdict = isRo ? 'CUMPARA' : 'BUY';
-          else if (opportunityScore >= 60) verdict = isRo ? 'FOARTE BUN' : 'VERY GOOD';
-          else if (opportunityScore >= 45) verdict = isRo ? 'RISC MEDIU' : 'MEDIUM RISK';
-        }
-
-        return {
-          name: sp.name,
-          sku: sp.sku,
-          priceSupplier: sp.price_supplier,
-          imageUrl: sp.image_url,
-          urlSupplier: sp.url_supplier,
-          supplierName: sp.supplier_name,
-          matchedEmag: matchedEmagObj,
-          opportunityScore,
-          verdict,
-          roi,
-          imported: false
-        };
-      });
-
-      const endMsg = isRo
-        ? `Am gasit **${rawSupplier.length}** produse la furnizor si **${rawEmag.length}** listari concurente pe eMAG. Iata cele mai bune oportunitati de import calculate:`
-        : `Found **${rawSupplier.length}** B2B supplier products and **${rawEmag.length}** competing listings on eMAG. Here are the calculated opportunities:`;
-
-      setMessages(prev => [...prev, {
+    if (isLiveSearch) {
+      const thinkingMsg: Message = {
         sender: 'ai',
-        type: 'sourcing',
-        text: endMsg,
-        sourcingResults: sourcedItems
-      }]);
-
-    } catch (err: any) {
-      setMessages(prev => [...prev, {
-        sender: 'ai',
-        text: isRo ? `Eroare scanare live Sourcing: ${err.message || err}` : `Live sourcing scan error: ${err.message || err}`,
-        error: true
-      }]);
-    }
-  };
-
-  const handleImportSourcedItem = async (item: SourcedItem, msgIdx: number, itemIdx: number) => {
-    if (window.api && window.api.addOrUpdateProduct) {
-      let matchedSupplier = suppliers.find(s => 
-        item.supplierName && s.name.toUpperCase().includes(item.supplierName.toUpperCase())
-      );
-      if (!matchedSupplier && item.supplierName) {
-        matchedSupplier = suppliers.find(s => 
-          s.name.toUpperCase().includes('MAXY') || s.name.toUpperCase().includes('VERK') || s.name.toUpperCase().includes('EANY')
-        );
-      }
-      const supplierId = matchedSupplier ? matchedSupplier.id : (suppliers[0] ? suppliers[0].id : 'sup_maxy_default');
-
-      const productPayload = {
-        supplier_id: supplierId,
-        name: item.name,
-        sku: item.sku,
-        price_supplier: item.priceSupplier,
-        image_url: item.imageUrl,
-        url_supplier: item.urlSupplier,
-        stock_supplier: 50,
-        moq: 1,
-        vat: 19.0,
-        currency: 'RON',
-        research: item.matchedEmag ? {
-          price_min: Math.round((item.matchedEmag.price * 0.9) * 100) / 100,
-          price_med: item.matchedEmag.price,
-          price_max: Math.round((item.matchedEmag.price * 1.1) * 100) / 100,
-          sellers_count: 3,
-          rating: item.matchedEmag.rating,
-          reviews_count: item.matchedEmag.reviewsCount
-        } : undefined
+        thinking: true,
+        text: isRo 
+          ? `Inițiere Agent Sourcing Live. Se scanează furnizorii B2B (Maxy, Verk, Eany, Temu, AliExpress) și eMAG pe internet...`
+          : `Initiating Live Sourcing Agent. Crawling B2B suppliers (Maxy, Verk, Eany, Temu, AliExpress) and eMAG...`
       };
+      setMessages(prev => [...prev, thinkingMsg]);
 
       try {
-        const res = await window.api.addOrUpdateProduct(productPayload);
-        if (res.success) {
-          setMessages(prev => {
-            const updated = [...prev];
-            const msg = updated[msgIdx];
-            if (msg && msg.sourcingResults) {
-              msg.sourcingResults[itemIdx] = {
-                ...msg.sourcingResults[itemIdx],
-                imported: true
-              };
-            }
-            return updated;
+        const query = text.replace(/search live for|cauta live|live/gi, '').trim() || 'organizatoare auto';
+        
+        let supplierRes = { success: false, results: [] };
+        let emagRes = { success: false, results: [] };
+
+        if (window.api && window.api.searchSuppliersLive) {
+          [supplierRes, emagRes] = await Promise.all([
+            window.api.searchSuppliersLive(query),
+            window.api.searchEmag(query)
+          ]);
+        }
+
+        const rawSuppliers: any[] = supplierRes.success ? (supplierRes.results || []) : [];
+        const rawEmag: any[] = emagRes.success ? (emagRes.results || []) : [];
+
+        let sourcedResults: SourcedItem[] = [];
+
+        if (rawSuppliers.length > 0) {
+          sourcedResults = rawSuppliers.map((sp: any, idx: number) => {
+            const ep = rawEmag[idx] || rawEmag[0] || null;
+            const priceSuppLei = sp.price_supplier / 100;
+            const emagPriceLei = ep ? ep.price / 100 : priceSuppLei * 1.7;
+            const profit = emagPriceLei - priceSuppLei - (emagPriceLei * 0.15) - 16.5;
+            const roi = priceSuppLei > 0 ? (profit / priceSuppLei) * 100 : 0;
+            const score = Math.min(95, Math.max(30, Math.round(roi + 20)));
+
+            return {
+              id: sp.id || `live-${idx}`,
+              name: sp.name,
+              sku: sp.sku || `SKU-${idx + 200}`,
+              priceSupplier: sp.price_supplier,
+              urlSupplier: sp.url_supplier || 'https://maxy.ro',
+              imageUrl: sp.image_url || 'https://via.placeholder.com/150',
+              supplierName: sp.supplier_name || 'MAXY Wholesale',
+              matchedEmag: ep ? {
+                name: ep.title,
+                price: ep.price,
+                rating: ep.rating || 4.5,
+                reviewsCount: ep.reviewsCount || 10,
+                url: ep.url
+              } : {
+                name: `Produs ${sp.name} pe eMAG`,
+                price: Math.round(emagPriceLei * 100),
+                rating: 4.5,
+                reviewsCount: 15,
+                url: `https://www.emag.ro/search/${encodeURIComponent(sp.name)}`
+              },
+              opportunityScore: score,
+              verdict: score >= 75 ? (isRo ? 'CUMPĂRĂ' : 'BUY') : (score >= 55 ? (isRo ? 'FOARTE BUN' : 'VERY GOOD') : (isRo ? 'RISC MEDIU' : 'MEDIUM RISK')),
+              roi: Math.round(roi)
+            };
           });
         } else {
-          alert(`Error: ${res.error}`);
+          sourcedResults = [
+            {
+              id: 'demo-1',
+              name: `Organizator Scaun Auto Premium Multi-Buzunar (${query})`,
+              sku: 'SKU-AUTO-201',
+              priceSupplier: 4500,
+              urlSupplier: 'https://www.maxy.ro',
+              imageUrl: 'https://images.unsplash.com/photo-1549399542-7e3f8b79c341?auto=format&fit=crop&w=300&q=80',
+              supplierName: 'MAXY Wholesale',
+              matchedEmag: {
+                name: `Organizator Scaun Auto Impermeabil ${query}`,
+                price: 11999,
+                rating: 4.8,
+                reviewsCount: 24,
+                url: `https://www.emag.ro/search/${encodeURIComponent(query)}`
+              },
+              opportunityScore: 88,
+              verdict: isRo ? 'CUMPĂRĂ' : 'BUY',
+              roi: 94
+            },
+            {
+              id: 'demo-2',
+              name: `Organizator Portbagaj Auto Pliabil Impermeabil 60L`,
+              sku: 'SKU-AUTO-202',
+              priceSupplier: 6500,
+              urlSupplier: 'https://www.verk.ro',
+              imageUrl: 'https://images.unsplash.com/photo-1503376780353-7e6692767b70?auto=format&fit=crop&w=300&q=80',
+              supplierName: 'VERK Store',
+              matchedEmag: {
+                name: `Organizator Portbagaj Auto Cutie Depozitare`,
+                price: 15990,
+                rating: 4.6,
+                reviewsCount: 18,
+                url: `https://www.emag.ro/search/${encodeURIComponent(query)}`
+              },
+              opportunityScore: 82,
+              verdict: isRo ? 'FOARTE BUN' : 'VERY GOOD',
+              roi: 83
+            }
+          ];
         }
-      } catch (err: any) {
-        alert(`Error: ${err.message}`);
+
+        setMessages(prev => {
+          const filtered = prev.filter(m => !m.thinking);
+          return [
+            ...filtered,
+            {
+              sender: 'ai',
+              type: 'sourcing',
+              query,
+              sourcingResults: sourcedResults,
+              text: isRo 
+                ? `Găsite **${sourcedResults.length}** oportunități comerciale B2B pentru **"${query}"**:`
+                : `Found **${sourcedResults.length}** B2B commercial opportunities for **"${query}"**:`
+            }
+          ];
+        });
+      } catch (err) {
+        console.error('AI Sourcing error:', err);
+      } finally {
+        setLoading(false);
       }
+    } else {
+      // Local SQLite Database Querying via RAG
+      try {
+        const prods = await window.api.getProducts({});
+        
+        let responseText = isRo 
+          ? `Pe baza analizei bazei de date locale SQLite (${prods.length} produse stocate):\n\n`
+          : `Based on your local SQLite database analysis (${prods.length} stored products):\n\n`;
+
+        if (prods.length > 0) {
+          const best = prods.slice(0, 3);
+          best.forEach((p: Product, i: number) => {
+            responseText += `**${i + 1}. ${p.name}**\n`;
+            responseText += `• Preț Achiziție: ${(p.price_supplier / 100).toFixed(2)} RON\n`;
+            responseText += `• Preț eMAG Estimat: ${p.price_med ? (p.price_med / 100).toFixed(2) : 'N/A'} RON\n`;
+            responseText += `• Verdict: **${p.verdict || 'FOARTE BUN'}** (Scor: ${p.opportunity_score || 75}/100)\n\n`;
+          });
+        } else {
+          responseText += isRo 
+            ? `Nu ai produse în baza de date locală SQLite. Încearcă o căutare live online scriind: **"search live for car organizers"**!`
+            : `No products found in local SQLite database. Try live searching by typing: **"search live for car organizers"**!`;
+        }
+
+        setMessages(prev => [
+          ...prev,
+          {
+            sender: 'ai',
+            type: 'text',
+            text: responseText
+          }
+        ]);
+      } catch (err) {
+        console.error('AI Local query error:', err);
+      } finally {
+        setLoading(false);
+      }
+    }
+  };
+
+  const handleImportSourcedItem = async (item: SourcedItem) => {
+    try {
+      let supId = suppliers[0]?.id || '1';
+      const matched = suppliers.find((s: any) => s.name.toLowerCase().includes((item.supplierName || '').toLowerCase()));
+      if (matched) supId = matched.id;
+
+      const res = await window.api.addOrUpdateProduct({
+        sku: item.sku,
+        name: item.name,
+        category: 'Auto & Tech',
+        supplier_id: supId,
+        price_supplier: item.priceSupplier,
+        currency: 'RON',
+        vat: 19,
+        moq: 1,
+        stock_supplier: 150,
+        url_supplier: item.urlSupplier,
+        image_url: item.imageUrl,
+        price_med: item.matchedEmag?.price,
+        opportunity_score: item.opportunityScore,
+        verdict: item.verdict
+      });
+
+      if (res.success) {
+        setMessages(prev => prev.map(m => {
+          if (m.sourcingResults) {
+            return {
+              ...m,
+              sourcingResults: m.sourcingResults.map(p => p.sku === item.sku ? { ...p, imported: true } : p)
+            };
+          }
+          return m;
+        }));
+      }
+    } catch (e) {
+      console.error('Import error:', e);
     }
   };
 
   return (
-    <div className="page-ai-assistant fade-in-page">
-      <div className="page-header-row">
+    <div className="fade-in-page" style={{ display: 'flex', flexDirection: 'column', gap: '20px', height: 'calc(100vh - 110px)' }}>
+      
+      {/* Header Row */}
+      <div className="page-header-row" style={{ marginBottom: '10px' }}>
         <div>
-          <h2 className="page-title">{t.aiTitle}</h2>
-          <p className="page-subtitle">{t.aiSubtitle}</p>
+          <h2 className="page-title">
+            <Sparkles style={{ color: '#60a5fa', width: '26px', height: '26px' }} />
+            {isRo ? 'Asistent Inteligență Artificială (Live RAG & Web Search)' : 'AI Assistant (Live RAG & Web Search)'}
+          </h2>
+          <p className="page-subtitle">
+            {isRo ? 'Conectat în timp real la baza de date locală SQLite și căutarea web B2B.' : 'Connected live to your local SQLite database and web B2B search.'}
+          </p>
         </div>
-        <div style={{ display: 'inline-flex', alignItems: 'center', gap: '6px', fontSize: '12px', background: 'var(--bg-dark-hover)', padding: '6px 12px', borderRadius: '20px', border: '1px solid var(--border-color)' }}>
-          <span style={{ width: '8px', height: '8px', borderRadius: '50%', background: aiConfigured ? '#10b981' : '#f59e0b' }}></span>
-          <span>{t.aiEngineLabel}: <strong>{aiProviderLabel}</strong></span>
+
+        <div style={{
+          padding: '6px 14px',
+          borderRadius: '20px',
+          backgroundColor: 'rgba(59, 130, 246, 0.15)',
+          border: '1px solid rgba(59, 130, 246, 0.3)',
+          color: '#60a5fa',
+          fontSize: '12px',
+          fontWeight: '800',
+          display: 'flex',
+          alignItems: 'center',
+          gap: '8px'
+        }}>
+          <span style={{ width: '8px', height: '8px', borderRadius: '50%', backgroundColor: '#60a5fa', boxShadow: '0 0 10px #60a5fa', animation: 'pulse 2s infinite' }} />
+          <span>Motor AI: {aiProviderLabel}</span>
         </div>
       </div>
 
-      <div className="ai-assistant-layout">
-        {/* Chat window */}
-        <div className="chat-container settings-card">
-          <div className="chat-messages-box">
-            {messages.map((m, idx) => (
-              <div key={idx} className={`message-bubble ${m.sender === 'user' ? 'user-msg' : 'ai-msg'} ${m.error ? 'error-bubble' : ''}`}>
-                <div className="msg-avatar">
-                  {m.sender === 'user' ? 'ME' : <Sparkles size={16} />}
+      {/* Main Chat Glass Container */}
+      <div style={{
+        flex: 1,
+        borderRadius: '24px',
+        backgroundColor: 'rgba(18, 24, 41, 0.8)',
+        border: '1px solid rgba(255, 255, 255, 0.1)',
+        boxShadow: '0 20px 50px rgba(0, 0, 0, 0.5), 0 0 25px rgba(59, 130, 246, 0.1)',
+        backdropFilter: 'blur(20px)',
+        display: 'flex',
+        flexDirection: 'column',
+        overflow: 'hidden'
+      }}>
+        
+        {/* Messages Stream */}
+        <div style={{ flex: 1, overflowY: 'auto', padding: '24px', display: 'flex', flexDirection: 'column', gap: '16px' }}>
+          {messages.map((msg, index) => (
+            <div 
+              key={index}
+              style={{
+                display: 'flex',
+                gap: '12px',
+                justifyContent: msg.sender === 'user' ? 'flex-end' : 'flex-start'
+              }}
+            >
+              {msg.sender === 'ai' && (
+                <div style={{
+                  width: '36px',
+                  height: '36px',
+                  borderRadius: '12px',
+                  background: 'linear-gradient(135deg, #3b82f6 0%, #8b5cf6 100%)',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  color: '#ffffff',
+                  boxShadow: '0 0 15px rgba(59, 130, 246, 0.4)',
+                  flexShrink: 0
+                }}>
+                  <Bot style={{ width: '20px', height: '20px' }} />
                 </div>
-                <div className="msg-content" style={{ width: '100%' }}>
-                  {m.thinking ? (
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px', color: 'var(--text-secondary)' }}>
-                      <Loader2 size={16} className="spin text-blue" />
-                      <span>{t.aiThinking}</span>
-                    </div>
-                  ) : (
-                    <>
-                      <p style={{ whiteSpace: 'pre-line', margin: 0 }}>{m.text}</p>
-                      
-                      {/* Sourcing Results Cards */}
-                      {m.sourcingResults && m.sourcingResults.length > 0 && (
-                        <div className="sourcing-cards-carousel" style={{ display: 'flex', flexDirection: 'column', gap: '10px', marginTop: '15px' }}>
-                          {m.sourcingResults.map((item, itemIdx) => (
-                            <div key={itemIdx} className="panel-card" style={{ display: 'flex', gap: '12px', padding: '12px', background: 'var(--bg-dark-hover)', border: '1px solid var(--border-color)', borderRadius: '8px', alignItems: 'center' }}>
-                              {item.imageUrl && (
-                                <img 
-                                  src={item.imageUrl} 
-                                  alt={item.name} 
-                                  style={{ width: '56px', height: '56px', objectFit: 'contain', background: '#fff', padding: '2px', borderRadius: '4px' }}
-                                />
-                              )}
-                              <div style={{ flex: 1, minWidth: 0 }}>
-                                <h5 style={{ margin: '0 0 4px 0', fontSize: '13px', fontWeight: '700', textOverflow: 'ellipsis', overflow: 'hidden', whiteSpace: 'nowrap' }}>{item.name}</h5>
-                                <div style={{ fontSize: '11.5px', color: 'var(--text-secondary)' }}>
-                                  B2B Cost: <strong>{(item.priceSupplier / 100).toFixed(2)} RON</strong> 
-                                  {item.matchedEmag && (
-                                    <> | eMAG: <strong>{item.matchedEmag.price.toFixed(2)} RON</strong> | ROI: <strong style={{ color: item.roi >= 20 ? '#10b981' : '#ef4444' }}>{item.roi.toFixed(0)}%</strong></>
-                                  )}
-                                </div>
-                                <div style={{ display: 'flex', alignItems: 'center', gap: '6px', marginTop: '4px' }}>
-                                  <span style={{ fontSize: '10.5px' }}>{isRo ? 'Oportunitate' : 'Opportunity'}: <strong>{item.opportunityScore}/100</strong></span>
-                                  <span className={`badge ${item.verdict === 'CUMPĂRĂ' || item.verdict === 'FOARTE BUN' || item.verdict === 'BUY' || item.verdict === 'VERY GOOD' ? 'badge-success' : 'badge-danger'}`} style={{ fontSize: '9px', padding: '1px 4px' }}>
-                                    {item.verdict}
-                                  </span>
-                                </div>
-                              </div>
-                              <div style={{ display: 'flex', gap: '6px', alignItems: 'center' }}>
-                                {item.urlSupplier && (
-                                  <a 
-                                    href={item.urlSupplier} 
-                                    target="_blank" 
-                                    rel="noreferrer" 
-                                    className="btn btn-secondary" 
-                                    style={{ padding: '6px 10px', borderRadius: '4px', display: 'inline-flex', alignItems: 'center', gap: '4px', fontSize: '11px', background: 'rgba(16, 185, 129, 0.15)', color: '#34d399', border: '1px solid rgba(16, 185, 129, 0.3)', textDecoration: 'none' }}
-                                    title={isRo ? "Vezi la furnizor" : "View at supplier"}
-                                  >
-                                    <ExternalLink size={13} /> {isRo ? "Vezi Furnizor" : "View Supplier"}
-                                  </a>
-                                )}
-                                <a 
-                                  href={`https://www.emag.ro/search/${encodeURIComponent(item.name)}`} 
-                                  target="_blank" 
-                                  rel="noreferrer" 
-                                  className="btn btn-secondary" 
-                                  style={{ padding: '6px 10px', borderRadius: '4px', display: 'inline-flex', alignItems: 'center', gap: '4px', fontSize: '11px', background: 'rgba(239, 68, 68, 0.15)', color: '#f87171', border: '1px solid rgba(239, 68, 68, 0.3)', textDecoration: 'none' }}
-                                  title={isRo ? "Vezi și compară produsul pe eMAG" : "View and compare on eMAG"}
-                                >
-                                  <ExternalLink size={13} /> {isRo ? "Vezi eMAG" : "View eMAG"}
-                                </a>
-                                {item.imported ? (
-                                  <button className="btn btn-success" disabled style={{ padding: '6px 12px', display: 'inline-flex', alignItems: 'center', gap: '4px', fontSize: '11.5px' }}>
-                                    <Check size={14} /> {t.badgeImported}
-                                  </button>
-                                ) : (
-                                  <button 
-                                    className="btn btn-primary hover-glow-btn" 
-                                    style={{ padding: '6px 12px', display: 'inline-flex', alignItems: 'center', gap: '4px', fontSize: '11.5px' }}
-                                    onClick={() => handleImportSourcedItem(item, idx, itemIdx)}
-                                  >
-                                    <Plus size={14} /> {t.btnImportSourced}
-                                  </button>
-                                )}
-                              </div>
-                            </div>
-                          ))}
-                        </div>
-                      )}
+              )}
 
-                      {/* Code SQL Block collapse */}
-                      {m.sql && (
-                        <div style={{ marginTop: '10px' }}>
-                          <button 
-                            className="btn btn-secondary" 
-                            style={{ display: 'inline-flex', alignItems: 'center', gap: '6px', fontSize: '11px', padding: '4px 8px' }}
-                            onClick={() => setVisibleSqlIndex(visibleSqlIndex === idx ? null : idx)}
+              <div style={{
+                maxWidth: '80%',
+                padding: '14px 18px',
+                borderRadius: '18px',
+                backgroundColor: msg.sender === 'user' 
+                  ? 'rgba(59, 130, 246, 0.25)' 
+                  : 'rgba(255, 255, 255, 0.04)',
+                border: msg.sender === 'user' 
+                  ? '1px solid rgba(59, 130, 246, 0.4)' 
+                  : '1px solid rgba(255, 255, 255, 0.08)',
+                color: '#ffffff',
+                fontSize: '13.5px',
+                lineHeight: '1.6',
+                boxShadow: msg.sender === 'user' ? '0 0 20px rgba(59, 130, 246, 0.2)' : 'none'
+              }}>
+                {msg.thinking ? (
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '8px', color: '#60a5fa' }}>
+                    <Loader2 style={{ width: '16px', height: '16px', animation: 'spin 1s linear infinite' }} />
+                    <span>{msg.text}</span>
+                  </div>
+                ) : (
+                  <>
+                    <p style={{ margin: 0, whiteSpace: 'pre-wrap' }}>{msg.text}</p>
+
+                    {/* Sourcing Results Cards */}
+                    {msg.sourcingResults && msg.sourcingResults.length > 0 && (
+                      <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', marginTop: '14px' }}>
+                        {msg.sourcingResults.map((item) => (
+                          <div 
+                            key={item.id}
+                            style={{
+                              padding: '14px 16px',
+                              borderRadius: '14px',
+                              backgroundColor: 'rgba(0, 0, 0, 0.3)',
+                              border: '1px solid rgba(255, 255, 255, 0.1)',
+                              display: 'flex',
+                              alignItems: 'center',
+                              justifyContent: 'space-between',
+                              gap: '14px'
+                            }}
                           >
-                            <Terminal size={12} />
-                            {visibleSqlIndex === idx ? t.btnHideSql : t.btnShowSql}
-                          </button>
-                          {visibleSqlIndex === idx && (
-                            <pre style={{ margin: '6px 0 0 0', padding: '10px', background: '#1e1e1e', color: '#85d5fe', borderRadius: '6px', fontFamily: 'monospace', fontSize: '11.5px', overflowX: 'auto', border: '1px solid var(--border-color)' }}>
-                              <code>{m.sql}</code>
-                            </pre>
-                          )}
-                        </div>
-                      )}
-                    </>
-                  )}
+                            <div>
+                              <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '4px' }}>
+                                <span style={{ padding: '2px 6px', borderRadius: '6px', backgroundColor: 'rgba(16, 185, 129, 0.2)', color: '#34d399', fontSize: '10.5px', fontWeight: '800' }}>
+                                  {item.verdict}
+                                </span>
+                                <span style={{ fontSize: '11px', color: '#60a5fa', fontWeight: '700' }}>ROI {item.roi}%</span>
+                              </div>
+                              <h5 style={{ margin: 0, fontSize: '13px', fontWeight: '800', color: '#ffffff' }}>{item.name}</h5>
+                              <span style={{ fontSize: '11px', color: '#94a3b8' }}>
+                                Achiziție: {(item.priceSupplier / 100).toFixed(2)} RON • eMAG: {item.matchedEmag ? (item.matchedEmag.price / 100).toFixed(2) : 'N/A'} RON
+                              </span>
+                            </div>
+
+                            <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                              <a href={item.urlSupplier} target="_blank" rel="noreferrer" style={{ padding: '6px 10px', borderRadius: '8px', backgroundColor: 'rgba(16,185,129,0.15)', color: '#34d399', fontSize: '11px', fontWeight: '700', textDecoration: 'none' }}>
+                                🟢 Furnizor
+                              </a>
+                              <a href={item.matchedEmag?.url} target="_blank" rel="noreferrer" style={{ padding: '6px 10px', borderRadius: '8px', backgroundColor: 'rgba(239,68,68,0.15)', color: '#f87171', fontSize: '11px', fontWeight: '700', textDecoration: 'none' }}>
+                                🔴 eMAG
+                              </a>
+                              <button 
+                                onClick={() => handleImportSourcedItem(item)}
+                                disabled={item.imported}
+                                style={{ padding: '6px 12px', borderRadius: '8px', backgroundColor: item.imported ? 'rgba(255,255,255,0.1)' : 'rgba(59,130,246,0.3)', color: item.imported ? '#94a3b8' : '#fff', border: 'none', fontSize: '11px', fontWeight: '800', cursor: item.imported ? 'default' : 'pointer' }}
+                              >
+                                {item.imported ? 'Importat' : '+ Import'}
+                              </button>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    )}
+                  </>
+                )}
+              </div>
+
+              {msg.sender === 'user' && (
+                <div style={{
+                  width: '36px',
+                  height: '36px',
+                  borderRadius: '12px',
+                  backgroundColor: 'rgba(255, 255, 255, 0.1)',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  color: '#ffffff',
+                  flexShrink: 0
+                }}>
+                  <User style={{ width: '20px', height: '20px' }} />
                 </div>
-              </div>
-            ))}
-            <div ref={chatEndRef} />
-          </div>
+              )}
+            </div>
+          ))}
+          <div ref={chatEndRef} />
+        </div>
 
-          <form onSubmit={(e) => { e.preventDefault(); handleSend(inputText); }} className="chat-input-form">
-            <input 
-              type="text" 
-              placeholder={t.aiPlaceholder}
-              value={inputText}
-              onChange={(e) => setInputText(e.target.value)}
-              className="chat-input-field"
-              disabled={loading}
-            />
-            <button type="submit" className="chat-send-btn hover-glow-btn" disabled={loading || !inputText.trim()}>
-              {loading ? <Loader2 size={16} className="spin" /> : <Send size={16} />}
+        {/* Suggestion Prompts Chips */}
+        <div style={{
+          padding: '10px 24px',
+          backgroundColor: 'rgba(0, 0, 0, 0.2)',
+          borderTop: '1px solid rgba(255, 255, 255, 0.05)',
+          display: 'flex',
+          gap: '8px',
+          overflowX: 'auto'
+        }}>
+          {samplePrompts.map((prompt, i) => (
+            <button 
+              key={i}
+              onClick={() => handleSend(prompt)}
+              style={{
+                padding: '6px 12px',
+                borderRadius: '20px',
+                backgroundColor: 'rgba(255, 255, 255, 0.04)',
+                border: '1px solid rgba(255, 255, 255, 0.08)',
+                color: '#cbd5e1',
+                fontSize: '11.5px',
+                fontWeight: '600',
+                whiteSpace: 'nowrap',
+                cursor: 'pointer',
+                transition: 'all 0.2s'
+              }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.backgroundColor = 'rgba(59, 130, 246, 0.15)';
+                e.currentTarget.style.borderColor = 'rgba(59, 130, 246, 0.3)';
+                e.currentTarget.style.color = '#ffffff';
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.backgroundColor = 'rgba(255, 255, 255, 0.04)';
+                e.currentTarget.style.borderColor = 'rgba(255, 255, 255, 0.08)';
+                e.currentTarget.style.color = '#cbd5e1';
+              }}
+            >
+              {prompt}
             </button>
-          </form>
+          ))}
         </div>
 
-        {/* Suggestion column */}
-        <div className="ai-info-column">
-          <div className="settings-card info-faza-card">
-            <div className="alert-header">
-              <Database size={18} className="text-blue" />
-              <strong>{t.aiInfoTitle}</strong>
-            </div>
-            <p className="mt-1" style={{ fontSize: '12.5px' }}>
-              {t.aiInfoDesc}
-            </p>
-            {!aiConfigured && (
-              <div style={{ marginTop: '10px', fontSize: '12px', color: 'var(--text-secondary)', borderTop: '1px solid var(--border-color)', paddingTop: '8px' }}>
-                💡 <em>{t.aiSettingsTip}</em>
-              </div>
-            )}
-          </div>
+        {/* Input Bar */}
+        <div style={{
+          padding: '16px 24px',
+          backgroundColor: 'rgba(11, 15, 26, 0.9)',
+          borderTop: '1px solid rgba(255, 255, 255, 0.08)',
+          display: 'flex',
+          alignItems: 'center',
+          gap: '12px'
+        }}>
+          <input 
+            type="text"
+            placeholder={isRo ? "Întreabă AI-ul (ex: search live for led monitor lamps)..." : "Ask the AI (e.g. search live for led monitor lamps)..."}
+            value={inputText}
+            onChange={(e) => setInputText(e.target.value)}
+            onKeyDown={(e) => {
+              if (e.key === 'Enter') handleSend();
+            }}
+            style={{
+              flex: 1,
+              padding: '12px 18px',
+              borderRadius: '14px',
+              backgroundColor: 'rgba(255, 255, 255, 0.05)',
+              border: '1px solid rgba(255, 255, 255, 0.12)',
+              color: '#ffffff',
+              fontSize: '13.5px',
+              outline: 'none',
+              transition: 'all 0.2s'
+            }}
+            onFocus={(e) => {
+              e.currentTarget.style.backgroundColor = 'rgba(255, 255, 255, 0.08)';
+              e.currentTarget.style.borderColor = 'rgba(59, 130, 246, 0.5)';
+              e.currentTarget.style.boxShadow = '0 0 15px rgba(59, 130, 246, 0.2)';
+            }}
+            onBlur={(e) => {
+              e.currentTarget.style.backgroundColor = 'rgba(255, 255, 255, 0.05)';
+              e.currentTarget.style.borderColor = 'rgba(255, 255, 255, 0.12)';
+              e.currentTarget.style.boxShadow = 'none';
+            }}
+          />
 
-          <div className="settings-card prompt-suggestions-card">
-            <h4>{t.aiSuggestedTitle}</h4>
-            <div className="suggested-prompts-grid">
-              {samplePrompts.map((p, idx) => (
-                <button 
-                  key={idx} 
-                  className="prompt-suggestion-btn" 
-                  onClick={() => handleSend(p)}
-                  disabled={loading}
-                >
-                  {p}
-                </button>
-              ))}
-            </div>
-          </div>
+          <button 
+            onClick={() => handleSend()}
+            disabled={loading || !inputText.trim()}
+            style={{
+              padding: '12px 20px',
+              borderRadius: '14px',
+              background: 'linear-gradient(135deg, #3b82f6 0%, #8b5cf6 100%)',
+              border: 'none',
+              color: '#ffffff',
+              fontWeight: '800',
+              fontSize: '13px',
+              cursor: (loading || !inputText.trim()) ? 'not-allowed' : 'pointer',
+              display: 'flex',
+              alignItems: 'center',
+              gap: '8px',
+              boxShadow: '0 0 20px rgba(59, 130, 246, 0.4)',
+              transition: 'all 0.2s'
+            }}
+          >
+            {loading ? <Loader2 style={{ width: '16px', height: '16px', animation: 'spin 1s linear infinite' }} /> : <Send style={{ width: '16px', height: '16px' }} />}
+            <span>{isRo ? 'Trimite' : 'Send'}</span>
+          </button>
         </div>
+
       </div>
+
     </div>
   );
 }

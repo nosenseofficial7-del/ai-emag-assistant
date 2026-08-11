@@ -18,7 +18,7 @@ export interface ElectronAPI {
   saveSettings: (key: string, value: any) => Promise<any>;
   getSuppliers: () => Promise<any>;
   updateSupplierStatus: (id: string, enabled: boolean) => Promise<any>;
-  addSupplier: (name: string, website?: string, currency: string) => Promise<any>;
+  addSupplier: (supplierOrName: any, website?: string, currency?: string) => Promise<any>;
   getProducts: (filters: any) => Promise<any>;
   getProductDetails: (id: string) => Promise<any>;
   addOrUpdateProduct: (product: any) => Promise<any>;
