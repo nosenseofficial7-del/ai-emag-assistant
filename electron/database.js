@@ -572,6 +572,17 @@ export function saveSettings(key, value) {
     log(`Saved setting: ${key}`);
     return { success: true };
   } catch (err) {
+    log(`Error saving setting: ${err.message}`);
     return { success: false, error: err.message };
+  }
+}
+
+export function executeRawSql(sql) {
+  try {
+    log(`Executing Raw SQL: ${sql}`);
+    return db.prepare(sql).all();
+  } catch (err) {
+    log(`Error executing raw SQL: ${err.message}`);
+    throw err;
   }
 }
