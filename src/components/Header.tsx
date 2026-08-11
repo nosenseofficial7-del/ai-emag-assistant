@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Search, Sun, Moon, Globe, RefreshCw } from 'lucide-react';
+import { Search, Sun, Moon, Globe, RefreshCw, UserCheck } from 'lucide-react';
 import UpdateModal from './UpdateModal';
 
 interface HeaderProps {
@@ -29,7 +29,7 @@ export default function Header({
               setVersionBadge(`v${res.latestVersion} Nou!`);
               setHasNewUpdate(true);
             } else {
-              setVersionBadge(`v${res.currentVersion || '1.7.4'}`);
+              setVersionBadge(`v${res.currentVersion || '1.7.5'}`);
               setHasNewUpdate(false);
             }
           }
@@ -54,15 +54,37 @@ export default function Header({
   };
 
   return (
-    <header className="main-header">
-      <div className="header-search-container">
-        <form onSubmit={handleSearchSubmit} className="search-form">
-          <button type="submit" className="search-btn">
-            <Search size={18} />
+    <header style={{
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'space-between',
+      padding: '16px 32px',
+      backgroundColor: 'rgba(11, 15, 26, 0.8)',
+      backdropFilter: 'blur(20px)',
+      WebkitBackdropFilter: 'blur(20px)',
+      borderBottom: '1px solid rgba(255, 255, 255, 0.08)',
+      gap: '20px',
+      zIndex: 90
+    }}>
+      {/* Search Input Field */}
+      <div style={{ flex: 1, maxWidth: '520px' }}>
+        <form onSubmit={handleSearchSubmit} style={{ position: 'relative', display: 'flex', alignItems: 'center' }}>
+          <button type="submit" style={{
+            position: 'absolute',
+            left: '14px',
+            background: 'none',
+            border: 'none',
+            color: '#60a5fa',
+            cursor: 'pointer',
+            display: 'flex',
+            alignItems: 'center'
+          }}>
+            <Search style={{ width: '18px', height: '18px' }} />
           </button>
+          
           <input
             type="text"
-            placeholder={lang === 'ro' ? "Cauta global dupa EAN, SKU, produs, furnizor..." : "Global search by EAN, SKU, product, supplier..."}
+            placeholder={lang === 'ro' ? "Căutare globală EAN, SKU, denumire, furnizor..." : "Global search by EAN, SKU, title, supplier..."}
             value={searchInput}
             onChange={(e) => {
               setSearchInput(e.target.value);
@@ -70,56 +92,146 @@ export default function Header({
                 onSearch('');
               }
             }}
-            className="search-input"
+            style={{
+              width: '100%',
+              padding: '11px 40px 11px 44px',
+              backgroundColor: 'rgba(255, 255, 255, 0.04)',
+              border: '1px solid rgba(255, 255, 255, 0.1)',
+              borderRadius: '14px',
+              color: '#ffffff',
+              fontSize: '13px',
+              fontWeight: '500',
+              outline: 'none',
+              transition: 'all 0.25s',
+              boxShadow: 'inset 0 2px 4px rgba(0,0,0,0.2)'
+            }}
+            onFocus={(e) => {
+              e.target.style.backgroundColor = 'rgba(255, 255, 255, 0.07)';
+              e.target.style.borderColor = 'rgba(59, 130, 246, 0.5)';
+              e.target.style.boxShadow = '0 0 20px rgba(59, 130, 246, 0.25)';
+            }}
+            onBlur={(e) => {
+              e.target.style.backgroundColor = 'rgba(255, 255, 255, 0.04)';
+              e.target.style.borderColor = 'rgba(255, 255, 255, 0.1)';
+              e.target.style.boxShadow = 'inset 0 2px 4px rgba(0,0,0,0.2)';
+            }}
           />
+
           {searchInput && (
-            <button type="button" className="clear-search-btn" onClick={handleClearSearch}>
+            <button 
+              type="button" 
+              onClick={handleClearSearch}
+              style={{
+                position: 'absolute',
+                right: '14px',
+                background: 'none',
+                border: 'none',
+                color: '#94a3b8',
+                fontSize: '18px',
+                cursor: 'pointer'
+              }}
+            >
               ×
             </button>
           )}
         </form>
       </div>
 
-      <div className="header-actions">
+      {/* Header Actions Bar */}
+      <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+        
+        {/* System Update Button */}
         <button 
-          className="theme-toggle-header-btn" 
           onClick={() => setIsUpdateModalOpen(true)} 
           title={lang === 'ro' ? "Centru Actualizări Sistem" : "System Update Center"}
           style={{ 
-            marginRight: '8px', 
-            background: hasNewUpdate ? 'rgba(16, 185, 129, 0.2)' : 'rgba(59, 130, 246, 0.12)', 
-            border: hasNewUpdate ? '1px solid rgba(16, 185, 129, 0.5)' : '1px solid rgba(59, 130, 246, 0.3)', 
-            color: hasNewUpdate ? '#34d399' : '#60a5fa' 
+            display: 'flex',
+            alignItems: 'center',
+            gap: '8px',
+            padding: '9px 14px',
+            borderRadius: '12px',
+            background: hasNewUpdate ? 'rgba(16, 185, 129, 0.18)' : 'rgba(59, 130, 246, 0.12)', 
+            border: hasNewUpdate ? '1px solid rgba(16, 185, 129, 0.4)' : '1px solid rgba(59, 130, 246, 0.3)', 
+            color: hasNewUpdate ? '#34d399' : '#60a5fa',
+            fontWeight: '800',
+            fontSize: '12px',
+            cursor: 'pointer',
+            transition: 'all 0.2s'
           }}
+          onMouseEnter={(e) => (e.currentTarget.style.transform = 'translateY(-1px)')}
+          onMouseLeave={(e) => (e.currentTarget.style.transform = 'translateY(0)')}
         >
-          <RefreshCw size={15} className={`text-blue ${hasNewUpdate ? 'animate-spin' : ''}`} style={{ animation: 'pulse 2s infinite' }} />
-          <span style={{ fontWeight: 'bold', fontSize: '12px' }}>{versionBadge}</span>
+          <RefreshCw style={{ width: '14px', height: '14px', animation: 'spin 4s linear infinite' }} />
+          <span>{versionBadge}</span>
         </button>
 
         {/* Language Toggle */}
         <button 
-          className="theme-toggle-header-btn" 
           onClick={toggleLanguage} 
-          title={lang === 'ro' ? "Comuta in Engleza" : "Switch to Romanian"}
-          style={{ marginRight: '8px' }}
+          title={lang === 'ro' ? "Comutare în Engleză" : "Switch to Romanian"}
+          style={{
+            display: 'flex',
+            alignItems: 'center',
+            gap: '6px',
+            padding: '9px 14px',
+            borderRadius: '12px',
+            backgroundColor: 'rgba(255, 255, 255, 0.05)',
+            border: '1px solid rgba(255, 255, 255, 0.1)',
+            color: '#f8fafc',
+            fontWeight: '800',
+            fontSize: '12px',
+            cursor: 'pointer',
+            transition: 'all 0.2s'
+          }}
+          onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = 'rgba(255, 255, 255, 0.12)')}
+          onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = 'rgba(255, 255, 255, 0.05)')}
         >
-          <Globe size={18} className="text-blue" />
-          <span style={{ fontWeight: 'bold' }}>{lang.toUpperCase()}</span>
+          <Globe style={{ width: '15px', height: '15px', color: '#60a5fa' }} />
+          <span>{lang.toUpperCase()}</span>
         </button>
 
         {/* Theme Toggle */}
-        <button className="theme-toggle-header-btn" onClick={toggleTheme} title="Comuta tema Light/Dark">
-          {darkMode ? <Sun size={18} /> : <Moon size={18} />}
-          <span>
-            {lang === 'ro' 
-              ? (darkMode ? 'Mod Luminos' : 'Mod Intunecat') 
-              : (darkMode ? 'Light Mode' : 'Dark Mode')}
-          </span>
+        <button 
+          onClick={toggleTheme} 
+          title="Comutare Temă"
+          style={{
+            display: 'flex',
+            alignItems: 'center',
+            gap: '8px',
+            padding: '9px 14px',
+            borderRadius: '12px',
+            backgroundColor: 'rgba(255, 255, 255, 0.05)',
+            border: '1px solid rgba(255, 255, 255, 0.1)',
+            color: '#cbd5e1',
+            fontWeight: '600',
+            fontSize: '12px',
+            cursor: 'pointer',
+            transition: 'all 0.2s'
+          }}
+          onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = 'rgba(255, 255, 255, 0.12)')}
+          onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = 'rgba(255, 255, 255, 0.05)')}
+        >
+          {darkMode ? <Sun style={{ width: '15px', height: '15px', color: '#fbbf24' }} /> : <Moon style={{ width: '15px', height: '15px', color: '#818cf8' }} />}
+          <span>{darkMode ? (lang === 'ro' ? 'Luminos' : 'Light') : (lang === 'ro' ? 'Întunecat' : 'Dark')}</span>
         </button>
         
-        <div className="user-profile-summary">
-          <span className="user-role">Seller eMAG</span>
+        {/* Seller Status Pill */}
+        <div style={{
+          display: 'flex',
+          alignItems: 'center',
+          gap: '8px',
+          padding: '8px 14px',
+          borderRadius: '12px',
+          background: 'linear-gradient(135deg, rgba(59, 130, 246, 0.15) 0%, rgba(139, 92, 246, 0.15) 100%)',
+          border: '1px solid rgba(59, 130, 246, 0.3)',
+          color: '#ffffff',
+          fontSize: '12px',
+          fontWeight: '800'
+        }}>
+          <UserCheck style={{ width: '15px', height: '15px', color: '#60a5fa' }} />
+          <span>Seller eMAG</span>
         </div>
+
       </div>
 
       <UpdateModal 
