@@ -222,7 +222,7 @@ export const translations: Record<'ro' | 'en', TranslationSet> = {
     navChangelog: "Jurnal Schimbari",
     statusOnline: "ONLINE",
     statusOffline: "OFFLINE",
-    versionLabel: "Versiunea 1.7.5 (RO/EN)",
+    versionLabel: "Versiunea 1.7.6 (RO/EN)",
     storageLabel: "Stocare Locala SQLite",
     copyrightLabel: "Copyright: NoSense 2026",
 

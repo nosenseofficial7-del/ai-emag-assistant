@@ -9,7 +9,7 @@ interface SplashScreenProps {
 export default function SplashScreen({ onFinish, lang = 'ro' }: SplashScreenProps) {
   const isRo = lang === 'ro';
   const [progress, setProgress] = useState(0);
-  const [versionText, setVersionText] = useState('v1.7.4 • Enterprise Edition');
+  const [versionText, setVersionText] = useState('v1.7.6 • Enterprise Edition');
   const [statusText, setStatusText] = useState(
     isRo ? 'Initalizare Baza de date SQLite locala...' : 'Initializing local SQLite database...'
   );
@@ -20,7 +20,7 @@ export default function SplashScreen({ onFinish, lang = 'ro' }: SplashScreenProp
       (window as any).api.checkForUpdates()
         .then((res: any) => {
           if (res) {
-            const v = res.latestVersion || res.currentVersion || '1.7.5';
+            const v = res.latestVersion || res.currentVersion || '1.7.6';
             setVersionText(`v${v} • Enterprise Edition`);
           }
         })

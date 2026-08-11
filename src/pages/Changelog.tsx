@@ -11,9 +11,31 @@ export default function ChangelogPage({ t, lang = 'ro' }: ChangelogPageProps) {
 
   const releases = [
     {
-      version: 'v1.7.5',
+      version: 'v1.7.6',
       date: '11 August 2026',
       tag: isRo ? 'LANSAT ACUM • ENTERPRISE v2.0' : 'CURRENT RELEASE • ENTERPRISE v2.0',
+      color: '#3b82f6',
+      title: isRo 
+        ? 'Restaurare Ecrane de Încărcare, Design UI v2.0 & Verificare Integrată' 
+        : 'Loading Screens Restoration, UI v2.0 & Integrated System Audit',
+      changes: isRo ? [
+        'Restaurare Ecran de Pornire (Splash Screen): Inele cibernetice rotative, pictogramă Cpu iluminată și progres în 5 etape de conectare.',
+        'Restaurare Loader Tranziție între Pagini: Indicator vizual animat sticlos la comutarea între taburile din meniul lateral.',
+        'Optimizară Bară Căutare Globală & Buton Actualizare: Ajustare spațiere, aliniere și insignă pulsatilă v1.7.6 în Header.',
+        'Sistem Express Update optimizat pentru menținerea 100% integră a stocului local SQLite și a setărilor.',
+        'Verificare completă a tuturor modulelor bilingve (RO/EN) și remediere erori minore de aliniere.'
+      ] : [
+        'Splash Screen Restoration: Cyber spinner rings, glowing Cpu icon, and 5-stage initialization progress bar.',
+        'Page Transition Loader Restoration: Smooth frosted glass loader overlay during sidebar navigation.',
+        'Header Search Bar & Update Button Polish: Improved alignment, spacing, and pulsing v1.7.6 badge in Header.',
+        'Optimized Express Update system ensuring 100% preservation of local SQLite database and active settings.',
+        'Full bilingual audit (RO/EN) across all pages and minor layout alignment fixes.'
+      ]
+    },
+    {
+      version: 'v1.7.5',
+      date: '11 August 2026',
+      tag: isRo ? 'STABIL • ENTERPRISE' : 'STABLE • ENTERPRISE',
       color: '#ec4899',
       title: isRo 
         ? 'Refacere Completă Design UI v2.0 & Sistem Actualizare Fără Pierderi de Date' 

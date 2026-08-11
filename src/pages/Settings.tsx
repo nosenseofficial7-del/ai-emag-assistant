@@ -737,6 +737,33 @@ export default function Settings({ t, lang }: SettingsProps) {
           
           <div className="changelog-timeline" style={{ display: 'flex', flexDirection: 'column', gap: '15px', marginTop: '15px' }}>
             {/* v1.7.3 */}
+            {/* v1.7.6 */}
+            <div className="changelog-item" style={{ borderLeft: '3px solid #3b82f6', paddingLeft: '15px' }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '6px' }}>
+                <h5 style={{ margin: 0, fontSize: '14px', fontWeight: '700', color: '#3b82f6' }}>
+                  {lang === 'ro' 
+                    ? 'v1.7.6 – Restaurare Ecrane de Încărcare, Design UI v2.0 & Verificare Integrată' 
+                    : 'v1.7.6 – Loading Screens Restoration, UI v2.0 & Integrated System Audit'}
+                </h5>
+                <span style={{ fontSize: '11px', color: 'var(--text-secondary)' }}>11 August 2026</span>
+              </div>
+              <ul style={{ margin: 0, paddingLeft: '20px', fontSize: '12.5px', color: 'var(--text-secondary)', lineHeight: '1.6' }}>
+                {lang === 'ro' ? (
+                  <>
+                    <li><strong>Restaurare Ecran de Pornire (Splash Screen):</strong> Inele cibernetice rotative, pictogramă Cpu iluminată și progres în 5 etape de conectare.</li>
+                    <li><strong>Restaurare Loader Tranziție între Pagini:</strong> Indicator vizual animat sticlos la comutarea între taburile din meniul lateral.</li>
+                    <li><strong>Sistem Express Update Optimizat:</strong> Păstrarea 100% integră a stocului local SQLite și a setărilor.</li>
+                  </>
+                ) : (
+                  <>
+                    <li><strong>Splash Screen Restoration:</strong> Cyber spinner rings, glowing Cpu icon, and 5-stage initialization progress bar.</li>
+                    <li><strong>Page Transition Loader Restoration:</strong> Smooth frosted glass loader overlay during sidebar navigation.</li>
+                    <li><strong>Optimized Express Update System:</strong> Ensures 100% preservation of local SQLite database and active settings.</li>
+                  </>
+                )}
+              </ul>
+            </div>
+
             {/* v1.7.4 */}
             <div className="changelog-item" style={{ borderLeft: '3px solid #10b981', paddingLeft: '15px' }}>
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '6px' }}>

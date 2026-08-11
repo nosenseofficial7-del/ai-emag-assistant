@@ -1,12 +1,12 @@
 {
-  "latestVersion": "1.7.5",
+  "latestVersion": "1.7.6",
   "releaseDate": "2026-08-11",
   "releaseNotes": [
-    "Refacere completă UI v2.0: Design Glassmorphic ultra-premium, degradeuri neon și micro-animații fluide.",
-    "Compatibilitate 100% bilingvă (Română / Engleză) pe toate paginile și modulele.",
-    "Sistem de actualizare rapidă cu protecție automată a datelor locale (SQLite DB, produse și licență).",
-    "Filtru vizual Dark Mode îmbunătățit cu contrast înalt pentru meniurile dropdown și opțiunile de selecție.",
-    "Optimizare performanță și încărcare pagini cu loader hibrid animat."
+    "Versiunea 1.7.6: Restaurare completă ecran de pornire animat (Splash Screen) și Loader-ul de Tranziție între pagini.",
+    "Interfață Glassmorphic UI v2.0 cu layout fluid, carduri 3D iluminate și accente neon pe toate paginile.",
+    "Sistem Express Update optimizat: Instalare directă fără pierdere de date sau fișiere locale (SQLite DB, licență, watchlist).",
+    "Ajustare poziție și stilizare buton de actualizare din Header cu insignă pulsatilă v1.7.6.",
+    "Ajustări minore de stabilitate, contrast vizual și navigare bilingvă instantanee (RO/EN)."
   ],
   "downloadUrl": "https://github.com/nosenseofficial7-del/ai-emag-assistant/releases/latest/download/AI-eMAG-Assistant-Setup.exe"
 }
