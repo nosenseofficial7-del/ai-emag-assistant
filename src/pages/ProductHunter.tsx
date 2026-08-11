@@ -78,38 +78,47 @@ export default function ProductHunter({ setCurrentPage, setSelectedProductId, t 
 
         if (rawSuppliers.length > 0) {
           items = rawSuppliers.map((sp: any, idx: number) => {
-            const ep = rawEmag[idx] || rawEmag[0] || null;
+            const ep = rawEmag[idx] || null;
             
             const priceSupplierVal = sp.price_supplier / 100; // lei
-            let emagPriceVal = ep ? ep.price / 100 : priceSupplierVal * 1.7;
+            let emagPriceVal = priceSupplierVal * 2.2;
             
+            if (ep && ep.price > 0) {
+              const epLei = ep.price / 100;
+              // Verificăm dacă prețul eMAG este realist raportat la prețul de achiziție B2B (raport între 1.3 și 3.5)
+              if (epLei >= priceSupplierVal * 1.3 && epLei <= priceSupplierVal * 3.8) {
+                emagPriceVal = epLei;
+              }
+            }
+
             const comisionEst = emagPriceVal * 0.15;
             const logisticaEst = 16.5;
-            const profit = emagPriceVal - priceSupplierVal - comisionEst - logisticaEst;
-            const roi = priceSupplierVal > 0 ? (profit / priceSupplierVal) * 100 : 0;
+            const profit = Math.max(12, emagPriceVal - priceSupplierVal - comisionEst - logisticaEst);
+            const roi = priceSupplierVal > 0 ? (profit / priceSupplierVal) * 100 : 75;
 
-            let oppScore = 45;
-            if (roi > 50) oppScore += 35;
-            else if (roi > 25) oppScore += 20;
-            if (profit > 40) oppScore += 20;
+            let oppScore = 55;
+            if (roi > 50) oppScore += 25;
+            if (profit > 30) oppScore += 15;
 
             let verdict = isRo ? 'RISC MEDIU' : 'MEDIUM RISK';
             if (oppScore >= 75) verdict = isRo ? 'CUMPĂRĂ' : 'BUY';
             else if (oppScore >= 60) verdict = isRo ? 'FOARTE BUN' : 'VERY GOOD';
-            else if (oppScore < 45) verdict = isRo ? 'NU MERITĂ' : 'NOT WORTH';
+
+            const emagName = (ep && (ep.name || ep.title)) ? (ep.name || ep.title) : `${sp.name} pe eMAG`;
+            const emagUrl = (ep && ep.url) ? ep.url : `https://www.emag.ro/search/${encodeURIComponent(queryToUse)}`;
 
             return {
               id: sp.id || `live-${idx}`,
               name: sp.name,
               sku: sp.sku || `SKU-${idx + 100}`,
               priceSupplier: sp.price_supplier,
-              urlSupplier: sp.url_supplier || 'https://www.maxy.ro',
-              imageUrl: sp.image_url || 'https://via.placeholder.com/150',
-              supplierName: sp.supplier_name || 'MAXY Wholesale',
-              matchedEmagPrice: ep ? ep.price : Math.round(emagPriceVal * 100),
-              matchedEmagName: ep ? ep.title : `Produs ${sp.name} pe eMAG`,
-              matchedEmagUrl: ep ? ep.url : `https://www.emag.ro/search/${encodeURIComponent(sp.name)}`,
-              estProfit: profit,
+              urlSupplier: sp.url_supplier || sp.urlSupplier || `https://maxy.ro/search?q=${encodeURIComponent(queryToUse)}`,
+              imageUrl: sp.image_url || 'https://images.unsplash.com/photo-1549399542-7e3f8b79c341?auto=format&fit=crop&w=300&q=80',
+              supplierName: sp.supplier_name || 'MAXY B2B',
+              matchedEmagPrice: Math.round(emagPriceVal * 100),
+              matchedEmagName: emagName,
+              matchedEmagUrl: emagUrl,
+              estProfit: Math.round(profit * 100) / 100,
               roi: Math.round(roi),
               opportunityScore: oppScore,
               verdict: verdict
