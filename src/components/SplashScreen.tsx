@@ -9,7 +9,7 @@ interface SplashScreenProps {
 export default function SplashScreen({ onFinish, lang = 'ro' }: SplashScreenProps) {
   const isRo = lang === 'ro';
   const [progress, setProgress] = useState(0);
-  const [versionText, setVersionText] = useState('v1.7.6 • Enterprise Edition');
+  const [versionText, setVersionText] = useState(lang === 'ro' ? 'Versiunea 1.7.7 Enterprise' : 'Version 1.7.7 Enterprise');
   const [statusText, setStatusText] = useState(
     isRo ? 'Initalizare Baza de date SQLite locala...' : 'Initializing local SQLite database...'
   );
@@ -97,7 +97,9 @@ export default function SplashScreen({ onFinish, lang = 'ro' }: SplashScreenProp
         <h1 className="splash-title">
           AI eMAG <span className="splash-title-highlight">Assistant</span>
         </h1>
-        <p className="splash-version">{versionText}</p>
+        <span style={{ fontSize: '13px', fontWeight: '800', color: '#60a5fa', letterSpacing: '1px' }}>
+          {versionText}
+        </span>
 
         {/* Progress Bar Container */}
         <div className="splash-progress-container">

@@ -11,9 +11,31 @@ export default function ChangelogPage({ t, lang = 'ro' }: ChangelogPageProps) {
 
   const releases = [
     {
+      version: 'v1.7.7',
+      date: '11 August 2026',
+      tag: isRo ? 'LANSAT ACUM • GLASSMORPHIC v2.0' : 'CURRENT RELEASE • GLASSMORPHIC v2.0',
+      color: '#10b981',
+      title: isRo 
+        ? 'Refacere Completă Design UI v2.0 pe Toate Paginile, Căutare LIVE Web AI & Peste 50 de Furnizori' 
+        : 'Full UI v2.0 Redesign Across All Pages, Live Web AI Sourcing & 50+ B2B Suppliers',
+      changes: isRo ? [
+        'Pop-up de Actualizare Centrat & Sticlos: Ferestra de update este poziționată fix pe centrul ecranului cu fundal blurat (backdrop-filter 20px) și selector bilingv Express/Clean update.',
+        'Asistent AI cu Căutare LIVE pe Web B2B: Căutarea live pe internet scanează furnizorii comerciali (Temu, AliExpress, Maxy, Verk, eMAG) și generează carduri de oportunități interactive direct în chat cu buton de + Import.',
+        'Calculator de Profit Net & Unit Economics Refăcut: Carduri paralele sticloase pentru introducerea parametrilor și vizualizarea simulării financiare (marjă, ROI, comision eMAG, TVA).',
+        'Extindere Catalog cu Peste 50 de Furnizori B2B Verificați: Adăugat un catalog generos de furnizori reali (Temu, AliExpress, Alibaba, 1688, BigBuy, VidaXL, CJDropshipping, Merkandi etc.) direct în SQLite.',
+        'Setări & Administrare Furnizori Refăcute: Carduri sticloase cu glisoare interactive pentru ponderi, administrarea comisiilor pe categorii și filtrare rapidă a furnizorilor.'
+      ] : [
+        'Centered Glassmorphic Update Modal: Fixed overlay centered dialog with backdrop blur (20px) and interactive Express/Clean update mode selector.',
+        'AI Assistant Live Web Sourcing: Live web search crawls B2B suppliers (Temu, AliExpress, Maxy, Verk, eMAG) and renders interactive opportunity cards with + Import button directly in chat.',
+        'Redesigned Profit & Unit Economics Calculator: Dual side-by-side glass cards for financial parameters input and real-time net profit simulation (margin, ROI, eMAG fee, VAT).',
+        'Expanded Catalog with 50+ Verified B2B Wholesale Suppliers: Seeded a comprehensive directory of real suppliers (Temu, AliExpress, Alibaba, 1688, BigBuy, VidaXL, CJDropshipping, Merkandi etc.) in SQLite.',
+        'Redesigned Settings & Supplier Management: Glassmorphic cards with interactive sliders for opportunity weights, category commissions, and fast supplier search.'
+      ]
+    },
+    {
       version: 'v1.7.6',
       date: '11 August 2026',
-      tag: isRo ? 'LANSAT ACUM • ENTERPRISE v2.0' : 'CURRENT RELEASE • ENTERPRISE v2.0',
+      tag: isRo ? 'STABIL • ENTERPRISE v2.0' : 'STABLE • ENTERPRISE v2.0',
       color: '#3b82f6',
       title: isRo 
         ? 'Restaurare Ecrane de Încărcare, Design UI v2.0 & Verificare Integrată' 

@@ -1,12 +1,13 @@
 {
-  "latestVersion": "1.7.6",
+  "version": "1.7.7",
+  "latestVersion": "1.7.7",
   "releaseDate": "2026-08-11",
+  "downloadUrl": "https://github.com/nosenseofficial7-del/ai-emag-assistant/releases/download/v1.7.7/AI-eMAG-Assistant-Setup.exe",
   "releaseNotes": [
-    "Versiunea 1.7.6: Restaurare completă ecran de pornire animat (Splash Screen) și Loader-ul de Tranziție între pagini.",
-    "Interfață Glassmorphic UI v2.0 cu layout fluid, carduri 3D iluminate și accente neon pe toate paginile.",
-    "Sistem Express Update optimizat: Instalare directă fără pierdere de date sau fișiere locale (SQLite DB, licență, watchlist).",
-    "Ajustare poziție și stilizare buton de actualizare din Header cu insignă pulsatilă v1.7.6.",
-    "Ajustări minore de stabilitate, contrast vizual și navigare bilingvă instantanee (RO/EN)."
-  ],
-  "downloadUrl": "https://github.com/nosenseofficial7-del/ai-emag-assistant/releases/latest/download/AI-eMAG-Assistant-Setup.exe"
+    "Refacere completă Glassmorphic UI v2.0 pe toate paginile (AiAssistant, ProfitCalculator, Settings, Suppliers, ProductHunter, UpdateModal).",
+    "Pop-up de Actualizare centrat pe ecran cu fundal sticlos blurat și comutator Express/Clean update.",
+    "Asistent AI cu căutare LIVE pe Web B2B (Temu, AliExpress, Maxy, Verk, eMAG) și generare de carduri de oportunități interactive direct în chat.",
+    "Calculator de Profit & Unit Economics cu simulare paralele și defalcare taxe/marjă/ROI.",
+    "Extindere catalog cu peste 50 de furnizori B2B reali și verificați direct în baza de date locală SQLite."
+  ]
 }

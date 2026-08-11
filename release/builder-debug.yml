@@ -17,7 +17,6 @@ x64:
     - '**/*'
     - dist/**/*
     - electron/**/*
-    - package.json
 nsis:
   script: |-
     !include "C:\Users\nosen\.gemini\antigravity\scratch\ai-emag-assistant\node_modules\app-builder-lib\templates\nsis\include\StdUtils.nsh"
@@ -65,18 +64,67 @@ nsis:
     !define isForCurrentUser `"" isForCurrentUser ""`
 
     !macro addLangs
-      !insertmacro MUI_LANGUAGE "Romanian"
       !insertmacro MUI_LANGUAGE "English"
+      !insertmacro MUI_LANGUAGE "German"
+      !insertmacro MUI_LANGUAGE "French"
+      !insertmacro MUI_LANGUAGE "SpanishInternational"
+      !insertmacro MUI_LANGUAGE "SimpChinese"
+      !insertmacro MUI_LANGUAGE "TradChinese"
+      !insertmacro MUI_LANGUAGE "Japanese"
+      !insertmacro MUI_LANGUAGE "Korean"
+      !insertmacro MUI_LANGUAGE "Italian"
+      !insertmacro MUI_LANGUAGE "Dutch"
+      !insertmacro MUI_LANGUAGE "Danish"
+      !insertmacro MUI_LANGUAGE "Swedish"
+      !insertmacro MUI_LANGUAGE "Norwegian"
+      !insertmacro MUI_LANGUAGE "Finnish"
+      !insertmacro MUI_LANGUAGE "Russian"
+      !insertmacro MUI_LANGUAGE "Portuguese"
+      !insertmacro MUI_LANGUAGE "PortugueseBR"
+      !insertmacro MUI_LANGUAGE "Polish"
+      !insertmacro MUI_LANGUAGE "Ukrainian"
+      !insertmacro MUI_LANGUAGE "Czech"
+      !insertmacro MUI_LANGUAGE "Slovak"
+      !insertmacro MUI_LANGUAGE "Hungarian"
+      !insertmacro MUI_LANGUAGE "Arabic"
+      !insertmacro MUI_LANGUAGE "Turkish"
+      !insertmacro MUI_LANGUAGE "Thai"
+      !insertmacro MUI_LANGUAGE "Vietnamese"
     !macroend
 
-    !include "C:\Users\nosen\AppData\Local\Temp\t-5xm5o2\1-messages.nsh"
-    !include "C:\Users\nosen\AppData\Local\Temp\t-5xm5o2\2-messages.nsh"
     !addplugindir /x86-unicode "C:\Users\nosen\AppData\Local\electron-builder\Cache\nsis-resources-3.4.1\nsis-resources-3.4.1-2jx2y\plugins\x86-unicode"
+    !include "C:\Users\nosen\AppData\Local\Temp\t-wgGg4y\1-messages.nsh"
+    !include "C:\Users\nosen\AppData\Local\Temp\t-wgGg4y\2-messages.nsh"
     !macro licensePage
       LicenseLangString MUILicense 1033 "C:\Users\nosen\.gemini\antigravity\scratch\ai-emag-assistant\build\license_en.txt"
       LicenseLangString MUILicense 1048 "C:\Users\nosen\.gemini\antigravity\scratch\ai-emag-assistant\build\license_ro_RO.txt"
       LicenseLangString MUILicense 1048 "C:\Users\nosen\.gemini\antigravity\scratch\ai-emag-assistant\build\license_ro.txt"
       LicenseLangString MUILicense romanian "C:\Users\nosen\.gemini\antigravity\scratch\ai-emag-assistant\build\license_romanian.txt"
+      LicenseLangString MUILicense 1031 "C:\Users\nosen\.gemini\antigravity\scratch\ai-emag-assistant\build\license_en.txt"
+      LicenseLangString MUILicense 1036 "C:\Users\nosen\.gemini\antigravity\scratch\ai-emag-assistant\build\license_en.txt"
+      LicenseLangString MUILicense 3082 "C:\Users\nosen\.gemini\antigravity\scratch\ai-emag-assistant\build\license_en.txt"
+      LicenseLangString MUILicense 2052 "C:\Users\nosen\.gemini\antigravity\scratch\ai-emag-assistant\build\license_en.txt"
+      LicenseLangString MUILicense 1028 "C:\Users\nosen\.gemini\antigravity\scratch\ai-emag-assistant\build\license_en.txt"
+      LicenseLangString MUILicense 1041 "C:\Users\nosen\.gemini\antigravity\scratch\ai-emag-assistant\build\license_en.txt"
+      LicenseLangString MUILicense 1042 "C:\Users\nosen\.gemini\antigravity\scratch\ai-emag-assistant\build\license_en.txt"
+      LicenseLangString MUILicense 1040 "C:\Users\nosen\.gemini\antigravity\scratch\ai-emag-assistant\build\license_en.txt"
+      LicenseLangString MUILicense 1043 "C:\Users\nosen\.gemini\antigravity\scratch\ai-emag-assistant\build\license_en.txt"
+      LicenseLangString MUILicense 1030 "C:\Users\nosen\.gemini\antigravity\scratch\ai-emag-assistant\build\license_en.txt"
+      LicenseLangString MUILicense 1053 "C:\Users\nosen\.gemini\antigravity\scratch\ai-emag-assistant\build\license_en.txt"
+      LicenseLangString MUILicense 1044 "C:\Users\nosen\.gemini\antigravity\scratch\ai-emag-assistant\build\license_en.txt"
+      LicenseLangString MUILicense 1035 "C:\Users\nosen\.gemini\antigravity\scratch\ai-emag-assistant\build\license_en.txt"
+      LicenseLangString MUILicense 1049 "C:\Users\nosen\.gemini\antigravity\scratch\ai-emag-assistant\build\license_en.txt"
+      LicenseLangString MUILicense 2070 "C:\Users\nosen\.gemini\antigravity\scratch\ai-emag-assistant\build\license_en.txt"
+      LicenseLangString MUILicense 1046 "C:\Users\nosen\.gemini\antigravity\scratch\ai-emag-assistant\build\license_en.txt"
+      LicenseLangString MUILicense 1045 "C:\Users\nosen\.gemini\antigravity\scratch\ai-emag-assistant\build\license_en.txt"
+      LicenseLangString MUILicense 1058 "C:\Users\nosen\.gemini\antigravity\scratch\ai-emag-assistant\build\license_en.txt"
+      LicenseLangString MUILicense 1029 "C:\Users\nosen\.gemini\antigravity\scratch\ai-emag-assistant\build\license_en.txt"
+      LicenseLangString MUILicense 1051 "C:\Users\nosen\.gemini\antigravity\scratch\ai-emag-assistant\build\license_en.txt"
+      LicenseLangString MUILicense 1038 "C:\Users\nosen\.gemini\antigravity\scratch\ai-emag-assistant\build\license_en.txt"
+      LicenseLangString MUILicense 1025 "C:\Users\nosen\.gemini\antigravity\scratch\ai-emag-assistant\build\license_en.txt"
+      LicenseLangString MUILicense 1055 "C:\Users\nosen\.gemini\antigravity\scratch\ai-emag-assistant\build\license_en.txt"
+      LicenseLangString MUILicense 1054 "C:\Users\nosen\.gemini\antigravity\scratch\ai-emag-assistant\build\license_en.txt"
+      LicenseLangString MUILicense 1066 "C:\Users\nosen\.gemini\antigravity\scratch\ai-emag-assistant\build\license_en.txt"
       !insertmacro MUI_PAGE_LICENSE "$(MUILicense)"
     !macroend
 

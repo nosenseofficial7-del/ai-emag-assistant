@@ -17,7 +17,7 @@ export default function Header({
 }: HeaderProps) {
   const [searchInput, setSearchInput] = useState('');
   const [isUpdateModalOpen, setIsUpdateModalOpen] = useState(false);
-  const [versionBadge, setVersionBadge] = useState('v1.7.6');
+  const [versionBadge, setVersionBadge] = useState('v1.7.7');
   const [hasNewUpdate, setHasNewUpdate] = useState(false);
 
   useEffect(() => {

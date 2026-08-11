@@ -1,34 +1,38 @@
 {
   "name": "ai-emag-assistant",
   "private": true,
-  "version": "1.7.6",
+  "version": "1.7.7",
   "type": "module",
   "main": "electron/main.js",
   "scripts": {
     "dev": "vite",
     "build": "tsc -b && vite build",
-    "lint": "oxlint",
+    "lint": "eslint .",
     "preview": "vite preview",
-    "electron:dev": "electron electron/main.js",
-    "electron:build": "npm run build && electron-builder --win --x64",
-    "publish:release": "node scripts/publish_release.js"
+    "electron:dev": "concurrently \"vite\" \"wait-on tcp:5173 && electron .\"",
+    "electron:build": "npm run build && electron-builder",
+    "publish:release": "node scripts/publish_release.js",
+    "pdf:manual": "node scripts/generate_pdf_manual.js"
   },
   "dependencies": {
-    "lucide-react": "^1.30.0",
-    "react": "^19.2.8",
-    "react-dom": "^19.2.8",
+    "jspdf": "^2.5.1",
+    "jspdf-autotable": "^3.8.2",
+    "lucide-react": "^0.344.0",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
     "xlsx": "^0.18.5"
   },
   "devDependencies": {
-    "@types/node": "^24.13.3",
-    "@types/react": "^19.2.17",
-    "@types/react-dom": "^19.2.3",
-    "@vitejs/plugin-react": "^6.0.4",
+    "@types/node": "^20.11.24",
+    "@types/react": "^18.2.56",
+    "@types/react-dom": "^18.2.19",
+    "@vitejs/plugin-react": "^4.2.1",
+    "concurrently": "^8.2.2",
     "electron": "^43.3.0",
     "electron-builder": "^26.15.3",
-    "oxlint": "^1.75.0",
-    "typescript": "~6.0.2",
-    "vite": "^8.2.0"
+    "typescript": "^5.2.2",
+    "vite": "^5.1.4",
+    "wait-on": "^7.2.0"
   },
   "build": {
     "appId": "com.ai.emag.assistant",
@@ -38,15 +42,13 @@
     },
     "files": [
       "dist/**/*",
-      "electron/**/*",
-      "package.json"
+      "electron/**/*"
     ],
     "win": {
       "target": [
         "nsis"
       ],
-      "artifactName": "AI-eMAG-Assistant-Setup.${ext}",
-      "icon": "build/icon.png"
+      "icon": "public/icon.ico"
     },
     "nsis": {
       "oneClick": false,
@@ -54,10 +56,7 @@
       "createDesktopShortcut": true,
       "createStartMenuShortcut": true,
       "shortcutName": "AI eMAG Assistant",
-      "multiLanguageInstaller": true,
-      "displayLanguageSelector": true,
-      "installerLanguages": ["ro", "en"],
-      "deleteAppDataOnUninstall": false,
+      "artifactName": "AI-eMAG-Assistant-Setup.exe",
       "warningsAsErrors": false
     }
   }

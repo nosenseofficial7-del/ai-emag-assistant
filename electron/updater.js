@@ -10,7 +10,7 @@ const UPDATE_MANIFEST_URL = 'https://raw.githubusercontent.com/nosenseofficial7-
  * Verifică disponibilitatea unei versiuni noi a aplicației
  */
 export async function checkForUpdates() {
-  const currentVersion = app.getVersion() || '1.7.6';
+  const currentVersion = app.getVersion() || '1.7.7';
   const cacheBustedUrl = `${UPDATE_MANIFEST_URL}?t=${Date.now()}`;
   
   const info = {
