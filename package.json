@@ -57,6 +57,7 @@
       "multiLanguageInstaller": true,
       "displayLanguageSelector": true,
       "installerLanguages": ["ro", "en"],
+      "deleteAppDataOnUninstall": false,
       "warningsAsErrors": false
     }
   }

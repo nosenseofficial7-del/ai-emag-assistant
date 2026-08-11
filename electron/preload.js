@@ -42,7 +42,7 @@ contextBridge.exposeInMainWorld('api', {
   activateApp: (key) => ipcRenderer.invoke('activate-app', key),
   deactivateApp: () => ipcRenderer.invoke('deactivate-app'),
   checkForUpdates: () => ipcRenderer.invoke('check-for-updates'),
-  downloadAndInstallUpdate: (url) => ipcRenderer.invoke('download-and-install-update', url),
+  downloadAndInstallUpdate: (url, options) => ipcRenderer.invoke('download-and-install-update', url, options),
   onUpdateProgress: (callback) => {
     const subscription = (event, value) => callback(value);
     ipcRenderer.on('update-progress', subscription);

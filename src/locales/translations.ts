@@ -18,6 +18,28 @@ export interface TranslationSet {
   storageLabel: string;
   copyrightLabel: string;
 
+  // Update Modal
+  updateModalTitle: string;
+  updateModalSubtitle: string;
+  updateChecking: string;
+  updateCheckingDesc: string;
+  updateUpToDate: string;
+  updateUpToDateDesc: string;
+  updateNotesTitle: string;
+  updateAvailableBadge: string;
+  updateAvailableTitle: string;
+  updateCurrentVer: string;
+  updateNewVer: string;
+  updateSelectModeTitle: string;
+  updateModeExpressTitle: string;
+  updateModeExpressDesc: string;
+  updateModeCleanTitle: string;
+  updateModeCleanDesc: string;
+  updateBtnInstall: string;
+  updateBtnChecking: string;
+  updateBtnClose: string;
+  updateBtnLater: string;
+
   // Dashboard
   dashTitle: string;
   dashSubtitle: string;
@@ -204,6 +226,27 @@ export const translations: Record<'ro' | 'en', TranslationSet> = {
     storageLabel: "Stocare Locala SQLite",
     copyrightLabel: "Copyright: NoSense 2026",
 
+    updateModalTitle: "Centrul de Actualizări Sistem",
+    updateModalSubtitle: "Verificare & Instalare Versiuni Noi AI eMAG Assistant",
+    updateChecking: "Se verifică disponibilitatea unei noi versiuni...",
+    updateCheckingDesc: "Conectare securizată la serverul de release GitHub",
+    updateUpToDate: "Aplicația ta este complet la zi!",
+    updateUpToDateDesc: "Folosești deja cea mai recentă versiune oficială v",
+    updateNotesTitle: "Ce este nou în această versiune:",
+    updateAvailableBadge: "Actualizare Nouă Disponibilă",
+    updateAvailableTitle: "Versiunea v{ver} este gata de instalare!",
+    updateCurrentVer: "Versiune instalată:",
+    updateNewVer: "Versiune nouă:",
+    updateSelectModeTitle: "Alege modul de actualizare dorit:",
+    updateModeExpressTitle: "⚡ Actualizare Rapidă (Păstrează Datele) - RECOMANDAT",
+    updateModeExpressDesc: "Înlocuiește doar executabilul și fișierele de cod. Păstrează intacte toate produsele, baza de date SQLite, setările și licența activă.",
+    updateModeCleanTitle: "🧹 Reinstalare Curată (Șterge Cache / Fișiere Temporare)",
+    updateModeCleanDesc: "Resetează fișierele temporare de configurare și cache-ul aplicației înainte de aplicarea instalării.",
+    updateBtnInstall: "Descarcă & Instalează Actualizarea",
+    updateBtnChecking: "Reîncearcă Verificarea",
+    updateBtnClose: "Închide",
+    updateBtnLater: "Mai târziu",
+
     dashTitle: "Tablou de Bord (Dashboard)",
     dashSubtitle: "Prezentare generala a activitatii comerciale eMAG si oportunitatilor B2B.",
     statTotalProducts: "Total Produse Catalog",
@@ -379,6 +422,27 @@ export const translations: Record<'ro' | 'en', TranslationSet> = {
     versionLabel: "Version 1.7.4 (RO/EN)",
     storageLabel: "Local SQLite Storage",
     copyrightLabel: "Copyright: NoSense 2026",
+
+    updateModalTitle: "System Update Center",
+    updateModalSubtitle: "Check & Install New Versions for AI eMAG Assistant",
+    updateChecking: "Checking for new available updates...",
+    updateCheckingDesc: "Securing connection to GitHub release server",
+    updateUpToDate: "Your application is fully up to date!",
+    updateUpToDateDesc: "You are running the latest official version v",
+    updateNotesTitle: "What's new in this version:",
+    updateAvailableBadge: "New Update Available",
+    updateAvailableTitle: "Version v{ver} is ready to install!",
+    updateCurrentVer: "Installed version:",
+    updateNewVer: "New version:",
+    updateSelectModeTitle: "Choose your preferred update mode:",
+    updateModeExpressTitle: "⚡ Express Update (Preserve Data) - RECOMMENDED",
+    updateModeExpressDesc: "Replaces only app executable and code files. Keeps all products, local SQLite database, settings, and active license 100% untouched.",
+    updateModeCleanTitle: "🧹 Clean Reinstall (Clear Cache / Temp Files)",
+    updateModeCleanDesc: "Clears temporary configuration files and application cache before performing the new installation.",
+    updateBtnInstall: "Download & Install Update",
+    updateBtnChecking: "Retry Check",
+    updateBtnClose: "Close",
+    updateBtnLater: "Later",
 
     dashTitle: "Commercial Dashboard",
     dashSubtitle: "General overview of your active eMAG marketplace sales and B2B opportunities.",

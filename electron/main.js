@@ -332,9 +332,9 @@ function registerIpcHandlers() {
     }
   });
 
-  ipcMain.handle('download-and-install-update', async (event, url) => {
+  ipcMain.handle('download-and-install-update', async (event, url, options) => {
     try {
-      return await downloadAndInstallUpdate(mainWindow, url);
+      return await downloadAndInstallUpdate(mainWindow, url, options);
     } catch (e) {
       return { success: false, error: e.message };
     }

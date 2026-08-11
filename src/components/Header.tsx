@@ -126,6 +126,7 @@ export default function Header({
       <UpdateModal 
         isOpen={isUpdateModalOpen} 
         onClose={() => setIsUpdateModalOpen(false)} 
+        lang={lang}
       />
     </header>
   );
